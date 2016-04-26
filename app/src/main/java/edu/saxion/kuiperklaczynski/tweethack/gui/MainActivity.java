@@ -11,10 +11,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
+
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import edu.saxion.kuiperklaczynski.tweethack.R;
+import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
 
 public class MainActivity extends AppCompatActivity {
+
+    private List tweets = JSONLoading.tweetsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +38,10 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        TweetListAdapter tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, tweets);
+        ListView tweetsListView = (ListView) findViewById(R.id.tweetsListView);
+        tweetsListView.setAdapter(tweetListAdapter);
 
 
     }

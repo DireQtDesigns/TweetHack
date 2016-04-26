@@ -1,6 +1,11 @@
 package edu.saxion.kuiperklaczynski.tweethack.gui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +13,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 import edu.saxion.kuiperklaczynski.tweethack.R;
@@ -18,7 +27,7 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
  */
 public class TweetListAdapter extends ArrayAdapter<Tweet> {
 
-
+    public static final String TAG = "TweetHax_TwListAdapter"; //Log Tag
     private List<Tweet> tweets;
 
     /**
@@ -53,8 +62,24 @@ public class TweetListAdapter extends ArrayAdapter<Tweet> {
 
         //Image
         String imgURL = tweet.getUser().getProfile_image_url(); //TODO The formerly mentioned http bs, for now:
-        avatarView.setImageResource(R.drawable.aliens);
+        try {
+            avatarView.setImageDrawable(drawableFromUrl(imgURL));
+        }catch (Exception e) {
+            avatarView.setImageResource(R.drawable.aliens);
+            Log.e(TAG, "getView: ", e);
+        }
 
-        return super.getView(position, convertView, parent);
+        return convertView;
+    }
+
+    public static Drawable drawableFromUrl(String url) throws IOException {
+        Bitmap x;
+
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.connect();
+        InputStream input = connection.getInputStream();
+
+        x = BitmapFactory.decodeStream(input);
+        return new BitmapDrawable(x);
     }
 }

@@ -8,20 +8,37 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.saxion.kuiperklaczynski.tweethack.R;
 import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
+import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
+import edu.saxion.kuiperklaczynski.tweethack.objects.User;
 
 public class MainActivity extends AppCompatActivity {
 
-    private List tweets = JSONLoading.tweetsList;
+
+    public static List<Tweet> tweetsList = new ArrayList<>();
+    public static final String TAG = "TweetHax_MainActivity"; //Log Tag
+    public String jsonCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +46,37 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        BufferedReader br = null;
+        StringBuilder sb = new StringBuilder();
+
+        String line;
+        try {
+            InputStream is = getAssets().open("tweets.json");
+            br = new BufferedReader(new InputStreamReader(is));
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        Log.d(TAG, "onCreate: " + sb.toString());
+        jsonCode = sb.toString();
+        try {
+            JSONLoading.readJSON(jsonCode);
+            tweetsList = JSONLoading.tweetsList;
+        }catch (Exception e) {
+            Log.e(TAG, "onCreate: ", e);
+        }
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -39,11 +87,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        TweetListAdapter tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, tweets);
+        TweetListAdapter tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, tweetsList);
         ListView tweetsListView = (ListView) findViewById(R.id.tweetsListView);
         tweetsListView.setAdapter(tweetListAdapter);
-
-
     }
 
     @Override
@@ -66,4 +112,6 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }

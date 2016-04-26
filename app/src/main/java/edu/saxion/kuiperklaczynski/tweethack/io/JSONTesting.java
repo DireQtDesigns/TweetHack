@@ -1,6 +1,4 @@
-package edu.saxion.kuiperklaczynski.tweethack;
-
-import android.content.res.AssetManager;
+package edu.saxion.kuiperklaczynski.tweethack.io;
 
 import org.json.JSONArray;
 import org.json.JSONException;

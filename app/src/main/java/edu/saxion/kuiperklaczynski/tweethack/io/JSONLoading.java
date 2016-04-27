@@ -28,8 +28,8 @@ public class JSONLoading {
 
     //public static final File INPUT_FILE = new File("C:/Users/leonk/AndroidStudioProjects/JSONTest/tweets.json");
     public static List<Tweet> tweetsList = new ArrayList<>();
-    public static Map<String, Tweet> tweetsMap = new HashMap<>();
-    public static final String TAG = "TweetHax_JSONLoader"; //Log Tag
+    public static Map<String, Tweet> tweetsMap = new HashMap<>(); //id_str is key
+    private static final String TAG = "TweetHax_JSONLoader"; //Log Tag
 
     //public static void main(String[] args) {new JSONLoading().run();}
 
@@ -59,7 +59,7 @@ public class JSONLoading {
             JSONObject jsonStatus = statuses.getJSONObject(i);
             Tweet status = new Tweet(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
             User user = new User(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
             JSONObject jsonUser = jsonStatus.getJSONObject("user");
             //TODO Add all the other crap, repetitive af, i'll handle it.
 
@@ -84,6 +84,8 @@ public class JSONLoading {
             //Set user info
             user.setName(jsonUser.getString("name"));
             user.setProfile_image_url(jsonUser.getString("profile_image_url"));
+            user.setScreenname(jsonUser.getString("screen_name"));
+            user.setProfile_banner_url("profile_banner_url");
             //TODO ALL THE STUFFS
 
             //Finishing up

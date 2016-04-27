@@ -3,6 +3,7 @@ package edu.saxion.kuiperklaczynski.tweethack.objects;
 
 import android.support.annotation.Nullable;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 
@@ -52,8 +53,9 @@ public class User {
     private Boolean verified;
     private String withheld_in_countries;
     private String withheld_scope;
+    private String screenname;
 
-    public User(Boolean is_translator, Boolean contributors_enabled, String created_at, Boolean default_profile, String description, Entity[] entities, Integer favourites_count, Type following, Type follow_request_sent, Integer followers_count, Integer friends_count, Boolean geo_enabled, BigInteger id, String id_str, String lang, Integer listed_count, String location, String name, Boolean notifications, String profile_background_color, String profile_background_image_url, String profile_background_image_url_https, Boolean profile_background_tile, String profile_banner_url, String profile_image_url, String profile_image_url_https, String profile_link_color, String profile_sidebar_border_color, String profile_sidebar_fill_color, String profile_text_color, Boolean show_all_inline_media, Tweet status, Integer statuses_count, String time_zone, String url, Integer itc_offset, Boolean verified, String withheld_in_countries, String withheld_scope) {
+    public User(Boolean is_translator, Boolean contributors_enabled, String created_at, Boolean default_profile, String description, Entity[] entities, Integer favourites_count, Type following, Type follow_request_sent, Integer followers_count, Integer friends_count, Boolean geo_enabled, BigInteger id, String id_str, String lang, Integer listed_count, String location, String name, Boolean notifications, String profile_background_color, String profile_background_image_url, String profile_background_image_url_https, Boolean profile_background_tile, String profile_banner_url, String profile_image_url, String profile_image_url_https, String profile_link_color, String profile_sidebar_border_color, String profile_sidebar_fill_color, String profile_text_color, Boolean show_all_inline_media, Tweet status, Integer statuses_count, String time_zone, String url, Integer itc_offset, Boolean verified, String withheld_in_countries, String withheld_scope, String screenname) {
         this.is_translator = is_translator;
         this.contributors_enabled = contributors_enabled;
         this.created_at = created_at;
@@ -93,6 +95,7 @@ public class User {
         this.verified = verified;
         this.withheld_in_countries = withheld_in_countries;
         this.withheld_scope = withheld_scope;
+        this.screenname = screenname;
     }
 
     public Boolean getGeo_enabled() {
@@ -406,5 +409,13 @@ public class User {
 
     public void setWithheld_scope(String withheld_scope) {
         this.withheld_scope = withheld_scope;
+    }
+
+    public String getScreenname() {
+        return screenname;
+    }
+
+    public void setScreenname(String screenname) {
+        this.screenname = screenname;
     }
 }

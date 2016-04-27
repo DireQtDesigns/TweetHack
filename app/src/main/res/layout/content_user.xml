@@ -27,23 +27,58 @@
                 android:layout_height="128dp"
                 android:id="@+id/bannerView"
                 android:layout_gravity="center_horizontal|top"
-                android:src="@drawable/default_banner" />
+                android:src="@drawable/default_banner"
+                android:scaleX="1.5"
+                android:scaleY="1.5"/>
 
             <ImageView
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                android:id="@+id/imageView"
+                android:id="@+id/avatarViewProfile"
                 android:layout_gravity="center_horizontal|top"
                 android:elevation="1dp"
                 android:src="@drawable/aliens"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:translationZ="15dp" />
 
         </FrameLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:background="@color/colorAccent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Leon Klaczynski"
+                android:id="@+id/fullNameView"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:layout_marginBottom="5dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="\@tehzear"
+                android:id="@+id/usernameView"
+                android:alpha="0.7"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:textAlignment="textEnd"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp" />
+        </LinearLayout>
 
         <ListView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/listView"
+            android:id="@+id/userTweetsListView"
             android:layout_gravity="center" />
     </LinearLayout>
 

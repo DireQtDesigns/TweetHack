@@ -1,6 +1,7 @@
 package edu.saxion.kuiperklaczynski.tweethack.objects;
 
 
+import java.io.Serializable;
 import java.math.BigInteger;
 
 import edu.saxion.kuiperklaczynski.tweethack.objects.tweet.Contributor;
@@ -11,7 +12,7 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.tweet.Place;
 /**
  * Created by leonk on 25/04/2016.
  */
-public class Tweet {
+public class Tweet implements Serializable {
 
     private String createdAt;
     private Integer id;

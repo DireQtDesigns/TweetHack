@@ -1,6 +1,8 @@
 package edu.saxion.kuiperklaczynski.tweethack.gui;
 
 import android.app.ActionBar;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -12,7 +14,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public static List<Tweet> tweetsList = new ArrayList<>();
-    public static final String TAG = "TweetHax_MainActivity"; //Log Tag
+    private static final String TAG = "TweetHax_MainActivity"; //Log Tag
     public String jsonCode;
 
     @Override
@@ -82,14 +86,25 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "TODO: Everything, you idiot!", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "TODO: Everything, you fucking idiot!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
 
         TweetListAdapter tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, tweetsList);
-        ListView tweetsListView = (ListView) findViewById(R.id.tweetsListView);
+        final ListView tweetsListView = (ListView) findViewById(R.id.tweetsListView);
         tweetsListView.setAdapter(tweetListAdapter);
+        tweetsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, UserActivity.class);
+                Tweet tweet = tweetsList.get(position);
+                intent.putExtra("UserID", tweet.getUser().getId_str());
+                intent.putExtra("TweetID", tweet.getIdStr());
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     @Override

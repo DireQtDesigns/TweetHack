@@ -26,7 +26,7 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.User;
  */
 public class JSONLoading {
 
-    //public static final File INPUT_FILE = new File("C:/Users/leonk/AndroidStudioProjects/JSONTest/tweets.json"); //TODO Make this more....ehh everything-friendly, like android doesn't like a C drive
+    //public static final File INPUT_FILE = new File("C:/Users/leonk/AndroidStudioProjects/JSONTest/tweets.json");
     public static List<Tweet> tweetsList = new ArrayList<>();
     public static Map<String, Tweet> tweetsMap = new HashMap<>();
     public static final String TAG = "TweetHax_JSONLoader"; //Log Tag
@@ -78,13 +78,13 @@ public class JSONLoading {
             //status.setId(jsonStatus.getInt("id")); Doesn't seem to be right, let's just leave it alone...
             status.setIdStr(jsonStatus.getString("id_str"));
             status.setText(jsonStatus.getString("text"));
-            status.setCreated_at(jsonStatus.getString("created_at")); //TODO formatting currently: "Wed Apr 20 13:01:49 +0000 2016" as String, conv to 'Data' & 'Time' objects.
+            status.setCreated_at(jsonStatus.getString("created_at"));
             //TODO MOAR info
 
             //Set user info
             user.setName(jsonUser.getString("name"));
             user.setProfile_image_url(jsonUser.getString("profile_image_url"));
-            //TODO More eventually
+            //TODO ALL THE STUFFS
 
             //Finishing up
             status.setUser(user);

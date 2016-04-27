@@ -8,6 +8,7 @@ public class Settings {
     //Debug types:
     public static final int IO = 1;
     public static final int NET = 2;
+    public static final int GUI = 3;
     public static final int ALL = 1337;
 
     //Debug setting:

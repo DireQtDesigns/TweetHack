@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.List;
 
 import edu.saxion.kuiperklaczynski.tweethack.R;
+import edu.saxion.kuiperklaczynski.tweethack.net.DownloadImageTask;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
 
 /**
@@ -27,7 +28,6 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
  */
 public class TweetListAdapter extends ArrayAdapter<Tweet> {
 
-    public static final String TAG = "TweetHax_TwListAdapter"; //Log Tag
     private List<Tweet> tweets;
 
     /**
@@ -52,22 +52,17 @@ public class TweetListAdapter extends ArrayAdapter<Tweet> {
         Tweet tweet = tweets.get(position);
         TextView nameView = (TextView) convertView.findViewById(R.id.nameView);
         TextView timeView = (TextView) convertView.findViewById(R.id.timeView);
-        TextView bodyView = (TextView) convertView.findViewById(R.id.timeView);
-        ImageView avatarView = (ImageView) convertView.findViewById(R.id.avatarView); //TODO Fetch image bitmap over http, ouch.
+        TextView bodyView = (TextView) convertView.findViewById(R.id.bodyView);
+        ImageView avatarView = (ImageView) convertView.findViewById(R.id.avatarView);
 
         //Setting values
         nameView.setText(tweet.getUser().getName());
-        timeView.setText(tweet.getCreated_at());
+        timeView.setText(StringDateConverter.agoString(System.currentTimeMillis(), StringDateConverter.dateFromJSONString(tweet.getCreated_at())));
         bodyView.setText(tweet.getText());
 
-        //Image
-        String imgURL = tweet.getUser().getProfile_image_url(); //TODO The formerly mentioned http bs, for now:
-        try {
-            avatarView.setImageDrawable(drawableFromUrl(imgURL));
-        }catch (Exception e) {
-            avatarView.setImageResource(R.drawable.aliens);
-            Log.e(TAG, "getView: ", e);
-        }
+        //Image fetching from URL
+        String imgURL = tweet.getUser().getProfile_image_url();
+        new DownloadImageTask(avatarView).execute(imgURL);
 
         return convertView;
     }

@@ -6,7 +6,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/codename_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -23,6 +23,15 @@
         <activity
             android:name=".gui.UserActivity"
             android:label="@string/title_activity_user"
+            android:parentActivityName=".gui.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity" />
+        </activity>
+        <activity
+            android:name=".gui.TweetDetailActivity"
+            android:label="@string/title_activity_tweet_detail"
             android:parentActivityName=".gui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data

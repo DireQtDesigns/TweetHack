@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="edu.saxion.kuiperklaczynski.tweethack.gui.TweetDetailActivity"
+    tools:showIn="@layout/activity_tweet_detail"
+    android:background="@color/colorAccent3">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="340dp"
+            android:layout_height="470dp"
+            android:layout_gravity="center"
+            android:background="@drawable/tweet_frame_background"
+            android:layout_marginBottom="20dp">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:background="@color/colorPrimary">
+
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:id="@+id/tweetDetailAvatarView"
+                        android:src="@drawable/aliens" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="Name Placeholder"
+                        android:id="@+id/tweetDetailNameView"
+                        android:layout_marginLeft="20dp"
+                        android:textColor="@color/colorHeaderText" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="\@Username_topkek"
+                        android:id="@+id/TweetDetailUsernameView"
+                        android:layout_marginLeft="20dp"
+                        android:textColor="@color/colorAccent" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Getting used to the massive loading times of ARM-emulations. AMD, figure out your virtualisation for crying out loud "
+                android:id="@+id/tweetDetailBodyView"
+                android:textSize="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/colorAccent2"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                style="ba">
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:id="@+id/editText"
+                    android:layout_weight="1"
+                    android:text="\@Username_topkek"
+                    android:background="@drawable/reply_frame_background"
+                    android:paddingLeft="10dp"
+                    android:layout_margin="10dp"
+                    android:textColor="@color/colorHeaderText" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </FrameLayout>
+</RelativeLayout>

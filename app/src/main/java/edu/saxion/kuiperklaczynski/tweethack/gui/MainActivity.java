@@ -102,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("UserID", tweet.getUser().getId_str());
                 intent.putExtra("TweetID", tweet.getIdStr());
                 startActivity(intent);
-                finish();
             }
         });
     }

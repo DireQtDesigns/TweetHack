@@ -18,10 +18,10 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="340dp"
-            android:layout_height="470dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@drawable/tweet_frame_background"
-            android:layout_marginBottom="20dp">
+            android:layout_marginTop="20dp">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -63,7 +63,16 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="\@Username_topkek"
-                        android:id="@+id/TweetDetailUsernameView"
+                        android:id="@+id/tweetDetailUsernameView"
+                        android:layout_marginLeft="20dp"
+                        android:textColor="@color/colorAccent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="16y ago"
+                        android:id="@+id/tweetDetailTimeAgo"
                         android:layout_marginLeft="20dp"
                         android:textColor="@color/colorAccent" />
                 </LinearLayout>
@@ -76,29 +85,49 @@
                 android:id="@+id/tweetDetailBodyView"
                 android:textSize="20dp"
                 android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp" />
+                android:layout_marginRight="20dp"
+                android:autoLink="web" />
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@color/colorAccent2"
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="3dp"
-                style="ba">
+                style="ba"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
 
                 <EditText
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:id="@+id/editText"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tweetDetailReplyField"
                     android:layout_weight="1"
                     android:text="\@Username_topkek"
                     android:background="@drawable/reply_frame_background"
                     android:paddingLeft="10dp"
+                    android:textColor="@color/colorHeaderText"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
                     android:layout_margin="10dp"
-                    android:textColor="@color/colorHeaderText" />
+                    android:allowUndo="false"
+                    android:alpha="0.8"
+                    android:inputType="textNoSuggestions" />
             </LinearLayout>
+
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tweetDetailReplyList"
+                android:paddingBottom="3dp"
+                android:paddingLeft="1dp"
+                android:paddingRight="3dp"
+                android:padding="3dp"
+                android:smoothScrollbar="false"
+                android:layout_marginBottom="7dp" />
         </LinearLayout>
 
     </FrameLayout>

@@ -18,7 +18,7 @@ public class Tweet implements Serializable {
     private Integer id;
     private String idStr;
     private String text;
-    //private Annotation anno
+    //private Annotation annotation cba tho
     private Contributor[] contributor;
     private Coordinates coordinates;
     private String created_at;
@@ -27,7 +27,7 @@ public class Tweet implements Serializable {
     private Integer favorite_count;
     private Boolean favorited;
     private String filter_level;
-    //private Geo geo
+    //private Geo geo Wtf
     private String in_reply_to_screen_name;
     private BigInteger in_reply_to_status_id;
     private String in_reply_to_status_id_str;

@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         BufferedReader br = null;
         StringBuilder sb = new StringBuilder();
 
@@ -97,9 +96,8 @@ public class MainActivity extends AppCompatActivity {
         tweetsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MainActivity.this, UserActivity.class);
+                Intent intent = new Intent(MainActivity.this, TweetDetailActivity.class);
                 Tweet tweet = tweetsList.get(position);
-                intent.putExtra("UserID", tweet.getUser().getId_str());
                 intent.putExtra("TweetID", tweet.getIdStr());
                 startActivity(intent);
             }

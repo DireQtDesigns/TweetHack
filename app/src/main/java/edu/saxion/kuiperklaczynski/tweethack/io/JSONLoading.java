@@ -79,6 +79,7 @@ public class JSONLoading {
             status.setIdStr(jsonStatus.getString("id_str"));
             status.setText(jsonStatus.getString("text"));
             status.setCreated_at(jsonStatus.getString("created_at"));
+            status.setIn_reply_to_status_id_str(jsonStatus.getString("in_reply_to_status_id_str"));
             //TODO MOAR info
 
             //Set user info

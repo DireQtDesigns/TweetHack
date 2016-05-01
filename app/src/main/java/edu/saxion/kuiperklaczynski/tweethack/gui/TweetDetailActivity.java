@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +29,10 @@ import java.util.Map;
 import edu.saxion.kuiperklaczynski.tweethack.R;
 import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
 import edu.saxion.kuiperklaczynski.tweethack.net.DownloadImageTask;
+import edu.saxion.kuiperklaczynski.tweethack.net.URLTesting;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
 import edu.saxion.kuiperklaczynski.tweethack.objects.User;
+import edu.saxion.kuiperklaczynski.tweethack.objects.tweet.entities.URL;
 
 public class TweetDetailActivity extends AppCompatActivity {
 
@@ -38,6 +41,7 @@ public class TweetDetailActivity extends AppCompatActivity {
     public static List<Tweet> repliesList = new ArrayList<>();
     private static final String TAG = "TweetHax_TweetDetail"; //Log Tag
     private String fullName, username, avatarURL, body, timeAgo, id_str;
+    TweetListAdapter tweetListAdapter;
 
 
     @Override
@@ -64,17 +68,18 @@ public class TweetDetailActivity extends AppCompatActivity {
         }
         for (Tweet tweet : tweetsList) {
             String inReplyTo = tweet.getIn_reply_to_status_id_str();
-            if (Settings.DEBUG == Settings.ALL || Settings.DEBUG == Settings.GUI) {
+            if (Settings.DEBUG == Settings.ALL || Settings.DEBUG == Settings.IO) {
                 Log.d(TAG, "onCreate: inReplyTo: " + inReplyTo);
             }
             if (inReplyTo.equals(id_str)) {
                 repliesList.add(tweet);
-                if (Settings.DEBUG == Settings.ALL || Settings.DEBUG == Settings.GUI) {
+                if (Settings.DEBUG == Settings.ALL || Settings.DEBUG == Settings.IO) {
                     Log.d(TAG, "onCreate: Match! detailTweet " + id_str + " Found match: " + inReplyTo);
+                    Log.d(TAG, "onCreate: ArrayList toString(): "+repliesList.toString());
                 }
             }
         }
-        TweetListAdapter tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, repliesList); //TODO Implement actual tweets list, the above only filters out the non-replies to the dummy tweets
+        tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, repliesList); //TODO Implement actual tweets list, the above only filters out the non-replies to the dummy tweets
         ListView replyList = (ListView) findViewById(R.id.tweetDetailReplyList);
         if (repliesList.size() > 0) {
             TextView noReplyView = (TextView) findViewById(R.id.tweetDetailNoRepliesView);
@@ -107,6 +112,7 @@ public class TweetDetailActivity extends AppCompatActivity {
         timeAgoView.setText(timeAgo);
         replyField.setText("@" + username + " ");
 
+                new DownloadImageTask(avatarView).execute(avatarURL);
         replyField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(140)});
         replyField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -133,14 +139,24 @@ public class TweetDetailActivity extends AppCompatActivity {
                 return true;
             }
         });
-        tweetsMap.clear();
-        tweetsList.clear();
-        repliesList.clear();
     }
 
     private void sendTweet(String text, View view) {
         Snackbar.make(view, "Tweet sent to: " + username, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
         //TODO Implement sending a tweet
+    }
+
+    @Override
+    protected void onStop() {
+        repliesList.clear();
+        if(tweetListAdapter != null) tweetListAdapter.notifyDataSetChanged();
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+
+        super.onStart();
     }
 }

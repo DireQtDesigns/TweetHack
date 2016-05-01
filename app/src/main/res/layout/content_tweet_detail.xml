@@ -41,7 +41,7 @@
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:id="@+id/tweetDetailAvatarView"
-                        android:src="@drawable/aliens" />
+                        android:src="@drawable/dinosaur" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -76,6 +76,7 @@
                         android:layout_marginLeft="20dp"
                         android:textColor="@color/colorAccent" />
                 </LinearLayout>
+
             </LinearLayout>
 
             <TextView
@@ -118,6 +119,15 @@
                     android:inputType="textNoSuggestions" />
             </LinearLayout>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No replies were posted to this tweet."
+                android:id="@+id/tweetDetailNoRepliesView"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp" />
+
             <ListView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -128,6 +138,7 @@
                 android:padding="3dp"
                 android:smoothScrollbar="false"
                 android:layout_marginBottom="7dp" />
+
         </LinearLayout>
 
     </FrameLayout>

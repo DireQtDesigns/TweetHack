@@ -2,11 +2,15 @@ package edu.saxion.kuiperklaczynski.tweethack.net;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.nio.channels.FileLockInterruptionException;
 
 /**
  * Created by leonk on 27/04/2016.

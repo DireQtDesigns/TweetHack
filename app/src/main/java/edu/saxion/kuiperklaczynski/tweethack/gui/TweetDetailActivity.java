@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +35,7 @@ public class TweetDetailActivity extends AppCompatActivity {
 
     public static List<Tweet> tweetsList = new ArrayList<>();
     public static Map<String, Tweet> tweetsMap = new HashMap<>(); //id_str is key
-    public static List<Tweet> replyList = new ArrayList<>();
+    public static List<Tweet> repliesList = new ArrayList<>();
     private static final String TAG = "TweetHax_TweetDetail"; //Log Tag
     private String fullName, username, avatarURL, body, timeAgo, id_str;
 
@@ -50,22 +51,35 @@ public class TweetDetailActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if(getIntent().getStringExtra("TweetID") == null) {
+        if (getIntent().getStringExtra("TweetID") == null) {
             Log.e(TAG, "onCreate: TweetID = null");
         } else {
-           Tweet tweet = tweetsMap.get(getIntent().getStringExtra("TweetID"));
-            fullName = tweet.getUser().getName();
-            username = tweet.getUser().getScreenname();
-            avatarURL = tweet.getUser().getProfile_image_url();
-            body = tweet.getText();
-            timeAgo = StringDateConverter.agoString(System.currentTimeMillis(), StringDateConverter.dateFromJSONString(tweet.getCreated_at()));
-            id_str = tweet.getIdStr();
+            Tweet detailTweet = tweetsMap.get(getIntent().getStringExtra("TweetID"));
+            fullName = detailTweet.getUser().getName();
+            username = detailTweet.getUser().getScreenname();
+            avatarURL = detailTweet.getUser().getProfile_image_url();
+            body = detailTweet.getText();
+            timeAgo = StringDateConverter.agoString(System.currentTimeMillis(), StringDateConverter.dateFromJSONString(detailTweet.getCreated_at()));
+            id_str = detailTweet.getIdStr();
         }
-        for(Tweet tweet : tweetsList) {
-            if(tweet.getIn_reply_to_status_id_str().equals(id_str)) replyList.add(tweet);
+        for (Tweet tweet : tweetsList) {
+            String inReplyTo = tweet.getIn_reply_to_status_id_str();
+            if (Settings.DEBUG == Settings.ALL || Settings.DEBUG == Settings.GUI) {
+                Log.d(TAG, "onCreate: inReplyTo: " + inReplyTo);
+            }
+            if (inReplyTo.equals(id_str)) {
+                repliesList.add(tweet);
+                if (Settings.DEBUG == Settings.ALL || Settings.DEBUG == Settings.GUI) {
+                    Log.d(TAG, "onCreate: Match! detailTweet " + id_str + " Found match: " + inReplyTo);
+                }
+            }
         }
-        TweetListAdapter tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, replyList); //TODO Implement actual tweets list, the above only filters out the non-replies to the dummy tweets
+        TweetListAdapter tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, repliesList); //TODO Implement actual tweets list, the above only filters out the non-replies to the dummy tweets
         ListView replyList = (ListView) findViewById(R.id.tweetDetailReplyList);
+        if (repliesList.size() > 0) {
+            TextView noReplyView = (TextView) findViewById(R.id.tweetDetailNoRepliesView);
+            noReplyView.setVisibility(View.GONE);
+        }
         replyList.setAdapter(tweetListAdapter);
 
         replyList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -88,11 +102,10 @@ public class TweetDetailActivity extends AppCompatActivity {
 
 
         nameView.setText(fullName);
-        usernameView.setText("@"+username);
+        usernameView.setText("@" + username);
         bodyView.setText(body);
         timeAgoView.setText(timeAgo);
         replyField.setText("@" + username + " ");
-        new DownloadImageTask(avatarView).execute(avatarURL);
 
         replyField.setFilters(new InputFilter[]{new InputFilter.LengthFilter(140)});
         replyField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -120,13 +133,14 @@ public class TweetDetailActivity extends AppCompatActivity {
                 return true;
             }
         });
-
+        tweetsMap.clear();
+        tweetsList.clear();
+        repliesList.clear();
     }
 
     private void sendTweet(String text, View view) {
-        Snackbar.make(view, "Tweet sent to: "+ username, Snackbar.LENGTH_LONG)
+        Snackbar.make(view, "Tweet sent to: " + username, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
         //TODO Implement sending a tweet
     }
-
 }

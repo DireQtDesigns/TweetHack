@@ -27,7 +27,7 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.User;
 public class JSONLoading {
 
     //public static final File INPUT_FILE = new File("C:/Users/leonk/AndroidStudioProjects/JSONTest/tweets.json");
-    public static List<Tweet> tweetsList = new ArrayList<>();
+    public static ArrayList<Tweet> tweetsList = new ArrayList<>();
     public static Map<String, Tweet> tweetsMap = new HashMap<>(); //id_str is key
     private static final String TAG = "TweetHax_JSONLoader"; //Log Tag
 
@@ -106,6 +106,14 @@ public class JSONLoading {
                 Log.d(TAG, "Done");
             }
         }
+    }
+    public static ArrayList<Tweet> repliesTo(ArrayList<Tweet> from, Tweet to) {
+        ArrayList<Tweet> temp = new ArrayList<Tweet>();
+        for(Tweet t : from) {
+            if(t.getIn_reply_to_status_id_str().equals(to.getIdStr())) temp.add(t);
+        }
+        Log.d(TAG, "repliesTo: "+temp.toString());
+        return temp;
     }
 
 }

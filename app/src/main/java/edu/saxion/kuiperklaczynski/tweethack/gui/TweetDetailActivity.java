@@ -36,12 +36,12 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.tweet.entities.URL;
 
 public class TweetDetailActivity extends AppCompatActivity {
 
-    public static List<Tweet> tweetsList = new ArrayList<>();
+    public static ArrayList<Tweet> tweetsList = new ArrayList<>(), repliesTo = new ArrayList<>();
     public static Map<String, Tweet> tweetsMap = new HashMap<>(); //id_str is key
-    public static List<Tweet> repliesList = new ArrayList<>();
     private static final String TAG = "TweetHax_TweetDetail"; //Log Tag
     private String fullName, username, avatarURL, body, timeAgo, id_str;
     TweetListAdapter tweetListAdapter;
+    public Tweet detailTweet;
 
 
     @Override
@@ -52,13 +52,14 @@ public class TweetDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         tweetsMap = JSONLoading.tweetsMap;
         tweetsList = JSONLoading.tweetsList;
+        Log.e(TAG, "onCreate: " + JSONLoading.tweetsList.toString());
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (getIntent().getStringExtra("TweetID") == null) {
             Log.e(TAG, "onCreate: TweetID = null");
         } else {
-            Tweet detailTweet = tweetsMap.get(getIntent().getStringExtra("TweetID"));
+            detailTweet = tweetsMap.get(getIntent().getStringExtra("TweetID"));
             fullName = detailTweet.getUser().getName();
             username = detailTweet.getUser().getScreenname();
             avatarURL = detailTweet.getUser().getProfile_image_url();
@@ -66,22 +67,10 @@ public class TweetDetailActivity extends AppCompatActivity {
             timeAgo = StringDateConverter.agoString(System.currentTimeMillis(), StringDateConverter.dateFromJSONString(detailTweet.getCreated_at()));
             id_str = detailTweet.getIdStr();
         }
-        for (Tweet tweet : tweetsList) {
-            String inReplyTo = tweet.getIn_reply_to_status_id_str();
-            if (Settings.DEBUG == Settings.ALL || Settings.DEBUG == Settings.IO) {
-                Log.d(TAG, "onCreate: inReplyTo: " + inReplyTo);
-            }
-            if (inReplyTo.equals(id_str)) {
-                repliesList.add(tweet);
-                if (Settings.DEBUG == Settings.ALL || Settings.DEBUG == Settings.IO) {
-                    Log.d(TAG, "onCreate: Match! detailTweet " + id_str + " Found match: " + inReplyTo);
-                    Log.d(TAG, "onCreate: ArrayList toString(): "+repliesList.toString());
-                }
-            }
-        }
-        tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, repliesList); //TODO Implement actual tweets list, the above only filters out the non-replies to the dummy tweets
+        repliesTo = JSONLoading.repliesTo(tweetsList, detailTweet);
+        tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, repliesTo); //TODO Implement actual tweets list, the above only filters out the non-replies to the dummy tweets
         ListView replyList = (ListView) findViewById(R.id.tweetDetailReplyList);
-        if (repliesList.size() > 0) {
+        if (repliesTo.size() > 0) {
             TextView noReplyView = (TextView) findViewById(R.id.tweetDetailNoRepliesView);
             noReplyView.setVisibility(View.GONE);
         }
@@ -149,14 +138,12 @@ public class TweetDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        repliesList.clear();
-        if(tweetListAdapter != null) tweetListAdapter.notifyDataSetChanged();
+        finish();
         super.onStop();
     }
 
     @Override
     protected void onStart() {
-
         super.onStart();
     }
 }

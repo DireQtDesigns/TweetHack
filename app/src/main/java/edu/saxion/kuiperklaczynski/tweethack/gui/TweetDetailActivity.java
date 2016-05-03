@@ -96,7 +96,7 @@ public class TweetDetailActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        setTitle(fullName);
+        setTitle("@"+fullName+": "+"'"+body+"'");
 
         TextView nameView = (TextView) findViewById(R.id.tweetDetailNameView);
         TextView usernameView = (TextView) findViewById(R.id.tweetDetailUsernameView);

@@ -13,4 +13,5 @@ public class Settings {
 
     //Debug setting:
     public static final int DEBUG = ALL;
+
 }

@@ -138,6 +138,9 @@ public class TweetDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+        //tweetsList.clear();
+        //tweetsMap.clear();
+        //tweetListAdapter.notifyDataSetChanged();
         finish();
         super.onStop();
     }
@@ -145,5 +148,10 @@ public class TweetDetailActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

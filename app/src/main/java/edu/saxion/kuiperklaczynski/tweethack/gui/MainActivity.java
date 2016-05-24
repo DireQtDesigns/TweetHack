@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static List<Tweet> tweetsList = new ArrayList<>();
     private static final String TAG = "TweetHax_MainActivity"; //Log Tag
-    public String jsonCode;
+    private String jsonCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

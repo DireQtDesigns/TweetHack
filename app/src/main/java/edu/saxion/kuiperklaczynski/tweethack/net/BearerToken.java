@@ -1,36 +1,49 @@
 package edu.saxion.kuiperklaczynski.tweethack.net;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
+import org.apache.commons.io.IOUtils;
 
 /**
  * Created by Robin on 24-5-2016.
  */
-public class BearerToken {
+public class BearerToken extends AsyncTask<Context,Double,String>{
     private final String API_KEY = "4LiUJZIHjuFT6IVaGBCZooSRw", API_SECRET = "yrxAVjSOd7oyqOKCSwpAVKCsktOlw0rR8ZwjGUOQNnyxiz13QL";
-    //private final String BEARER_TOKEN;
+    //private String BEARER_TOKEN;
 
-    public void BearerToken() {
+    private final String TAG = "BearerToken";
 
+    private Context c;
+
+    public String getBearerToken(Context c) {
+        this.c = c;
+        String s = doInBackground(null);
+        Log.d(TAG, "getBearerToken: " + s);
+        return s;
     }
 
-    private JSONObject getBearerToken() {
+    private String generateBearerToken() {
         URL url;
         try {
             url = new URL("https://api.twitter.com/oauth2/token");
         } catch (MalformedURLException mue) {
-            System.out.println("get fucked kiddo");
+            Log.e(TAG, "generateBearerToken: ", mue);;
             return null;
         }
 
@@ -39,7 +52,7 @@ public class BearerToken {
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
         } catch (Exception e) {
-            System.out.println(e);
+            Log.e(TAG, "generateBearerToken: ", e);
             return null;
         }
 
@@ -48,7 +61,7 @@ public class BearerToken {
         try {
             authString = URLEncoder.encode(API_KEY, "UTF-8") + ":" + URLEncoder.encode(API_SECRET, "UTF-8");
         } catch (UnsupportedEncodingException uee) {
-            System.out.println(uee);
+            Log.e(TAG, "generateBearerToken: ", uee);
             return null;
         }
 
@@ -57,7 +70,7 @@ public class BearerToken {
         try {
             authStringBase64 = Base64.encodeToString(authString.getBytes("UTF-8"), Base64.NO_WRAP);
         } catch (Exception e) {
-            System.out.println(e);
+            Log.e(TAG, "generateBearerToken: ", e);
             return null;
         }
 
@@ -71,7 +84,7 @@ public class BearerToken {
         try {
             body = "grant_type=client_credentials".getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {
-            System.out.println(uee);
+            Log.e(TAG, "generateBearerToken: ", uee);
             return null;
         }
 
@@ -79,18 +92,40 @@ public class BearerToken {
 
         BufferedOutputStream os;
 
+        String token = null;
+
         try {
             os = new BufferedOutputStream(conn.getOutputStream());
             os.write(body);
             os.close();
-        } catch (IOException ioe) {
-            System.out.println(ioe);
-            return null;
-        }
 
-        for (int i = 0; i < body.length; i++) {
-            Log.d(TAG, "getBearerToken: ");
-        };
+
+        if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
+            InputStream is = conn.getInputStream();
+            String response = IOUtils.toString(is, "UTF-8");
+            IOUtils.closeQuietly(is);
+            conn.disconnect();
+            JSONObject jsonObject = new JSONObject(response);
+            token = jsonObject.getString("access_token");
+            }
+        } catch (IOException | JSONException e) {
+            Log.e(TAG, "generateBearerToken: ", e);
+        }
+        return token;
+    }
+
+    @Override
+    protected String doInBackground(Context... params) {
+        return generateBearerToken();
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        //SharedPreferences prefs = c.getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", c.MODE_PRIVATE);
+
+        //prefs.edit().putString("BEARERTOKEN", s).apply();
+
+        Log.d(TAG, "onPostExecute: " + s);
     }
 
 }

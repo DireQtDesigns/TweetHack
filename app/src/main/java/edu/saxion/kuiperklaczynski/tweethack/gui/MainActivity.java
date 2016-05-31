@@ -34,6 +34,7 @@ import java.util.Map;
 
 import edu.saxion.kuiperklaczynski.tweethack.R;
 import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
+import edu.saxion.kuiperklaczynski.tweethack.net.BearerToken;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
 import edu.saxion.kuiperklaczynski.tweethack.objects.User;
 
@@ -79,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception e) {
             Log.e(TAG, "onCreate: ", e);
         }
+
+        new BearerToken().execute(this);
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

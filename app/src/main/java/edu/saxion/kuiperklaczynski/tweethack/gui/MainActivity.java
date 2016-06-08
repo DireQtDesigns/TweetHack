@@ -3,6 +3,7 @@ package edu.saxion.kuiperklaczynski.tweethack.gui;
 import android.app.ActionBar;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -81,7 +82,15 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "onCreate: ", e);
         }
 
-        new BearerToken().execute(this);
+        SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
+        String bearerToken = prefs.getString("BEARERTOKEN", null);
+
+        if (bearerToken == null) {
+            Log.d(TAG, "onCreate: generating new BearerToken");
+            new BearerToken().execute(this);
+        } else {
+            Log.d(TAG, "onCreate: BearerToken Already Existed");
+        }
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

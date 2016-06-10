@@ -40,8 +40,8 @@ public class StringDateConverter {
         if(Settings.DEBUG == Settings.GUI || Settings.DEBUG == Settings.ALL) Log.d(TAG, "agoString, Difference: "+difference+"     Current: "+System.currentTimeMillis()+"     given: "+given.getTime());
         if(difference > DateUtils.YEAR_IN_MILLIS) { //Yeah, see the above method...
             s =  ""+(Math.round(difference / DateUtils.YEAR_IN_MILLIS))+"y ago";
-        } else if(difference > 30.5 * (DateUtils.DAY_IN_MILLIS)) { //Meh, itll do
-            s =  ""+(Math.round(difference /  30.5 * (DateUtils.DAY_IN_MILLIS)))+"m ago";
+        } else if(difference > 30.4 * (DateUtils.DAY_IN_MILLIS)) { //Meh, itll do
+            s =  ""+(Math.round(difference /  30.4 * (DateUtils.DAY_IN_MILLIS)))+"m ago";
         } else if(difference > DateUtils.DAY_IN_MILLIS) {
             s =  ""+(Math.round(difference / DateUtils.DAY_IN_MILLIS))+"d ago";
         } else if(difference > DateUtils.HOUR_IN_MILLIS) {

@@ -60,6 +60,8 @@ public class JSONLoading {
             Tweet status = new Tweet(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
             User user = new User(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+
+            //OR...... Just make an empty constructor, i was being an idiot, don't mind
             JSONObject jsonUser = jsonStatus.getJSONObject("user");
             //TODO Add all the other crap, repetitive af, i'll handle it.
 

@@ -1,3 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
 
+    <item
+        jar="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\23.2.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="673d77a5bbddd766037f088e775df525c46407f0">
+        <dex dex="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-vector-drawable-23.2.1_14890ee7b54a9932fe687a787f39c0fe834b49c9\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\23.2.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="3469cb457f10f74c28cbc05f069b6c894f6cbdd0">
+        <dex dex="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-animated-vector-drawable-23.2.1_4f0561d757db6e597bcaaf95c82ac6dc1e56c4f5\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.2.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="e3885783ff8926ed9e2fdcd16816c2e1e73e7aee">
+        <dex dex="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-recyclerview-v7-23.2.1_e311325dd3f1ce91b10cc6ea3c8da1d29009e7fa\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.2.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="e4d0cbb0b999604b349062f0214a0a228a7fd151">
+        <dex dex="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-23.2.1_a71f2036ef17b622e9b481d29a8847dfe2bc85a4\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\leonk\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.2.1\support-annotations-23.2.1.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="ccb693bc0774fcb637246f7360de25b4af7df318">
+        <dex dex="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-23.2.1_096ac0b53438ee93a3d8e9985372665a6cba0235\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\exploded-aar\com.android.support\design\23.2.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="72961d8b453b46e277702f18de9d210bc019e36e">
+        <dex dex="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-design-23.2.1_1160430e196fe3ba88b4f6d8722a8ed7f91031b2\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="99b2464292b98b5c5691d679f483779c0b371dc1">
+        <dex dex="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_84c26afbacebed5c9c1359c916a8ed89890da463\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.2.1\jars\libs\internal_impl-23.2.1.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="607a3d0b8013b4ccbfeb0b7cb293351994e021fb">
+        <dex dex="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-23.2.1_b312718b2edc8c79270048802a92e98649a67c8a\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="7962b32d32a8ce9c7d44655b7841e3ea69c5a748">
+        <dex dex="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_25905c22c6b1ae9f34f5c5384a9af23c3bab3aee\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.2.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.2"
+        sha1="3be474b1b21b31cf2fa93fe6bd641ae108d96452">
+        <dex dex="C:\Users\leonk\AndroidStudioProjects\TweetHack\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-23.2.1_433820ba8a10cc3ddb8e6bad9d8245f6b5a9e4bf\classes.dex" />
+    </item>
+
+</items>

@@ -86,6 +86,10 @@ public class SearchTask extends AsyncTask<String, Void, Tweet[]> {
         }
 
         Log.d(TAG, "doInBackground: succesfully loaded search");
+
+        if (tweets == null) {
+            Log.d(TAG, "doInBackground: tweets is null");
+        }
         return tweets;
     }
 
@@ -98,8 +102,6 @@ public class SearchTask extends AsyncTask<String, Void, Tweet[]> {
         for (Tweet t : tweets) {
             list.add(t);
         }
-
-        m.tweetsList = list;
-        m.updateView();
+        m.updateView(list);
     }
 }

@@ -36,18 +36,33 @@ import java.util.Map;
 import edu.saxion.kuiperklaczynski.tweethack.R;
 import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
 import edu.saxion.kuiperklaczynski.tweethack.net.BearerToken;
+import edu.saxion.kuiperklaczynski.tweethack.net.SearchTask;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
 import edu.saxion.kuiperklaczynski.tweethack.objects.User;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static MainActivity instance;
+
+    public static MainActivity getInstance() {
+        if (instance == null) {
+            instance = new MainActivity();
+        }
+
+        return instance;
+    }
+
 
     public static List<Tweet> tweetsList = new ArrayList<>();
     private static final String TAG = "TweetHax_MainActivity"; //Log Tag
     private String jsonCode;
+    private static ListView listView;
+    private static TweetListAdapter tweetListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        instance = this;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -83,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
-        String bearerToken = prefs.getString("BEARERTOKEN", null);
+        final String bearerToken = prefs.getString("BEARERTOKEN", null);
 
         if (bearerToken == null) {
             Log.d(TAG, "onCreate: generating new BearerToken");
@@ -97,15 +112,14 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "TODO: Everything, you fucking idiot!", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                new SearchTask().execute(new String[]{bearerToken, "test"});
             }
         });
 
-        TweetListAdapter tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, tweetsList);
-        final ListView tweetsListView = (ListView) findViewById(R.id.tweetsListView);
-        tweetsListView.setAdapter(tweetListAdapter);
-        tweetsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, tweetsList);
+        listView = (ListView) findViewById(R.id.tweetsListView);
+        listView.setAdapter(tweetListAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MainActivity.this, TweetDetailActivity.class);
@@ -114,6 +128,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
     }
 
     @Override
@@ -137,5 +153,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+    public static void updateView() {
+        tweetListAdapter.notifyDataSetChanged();
+    }
 }

@@ -51,7 +51,7 @@ public class JSONLoading {
      * @throws JSONException If object or data cannot be found etc.
      * @throws IOException If file cannot be found.
      */
-    public static void readJSON(String jsonCode) throws JSONException, IOException {
+    public static Tweet[] readJSON(String jsonCode) throws JSONException, IOException {
         if(Settings.DEBUG == Settings.IO || Settings.DEBUG == Settings.ALL) Log.d("JSONLoader", jsonCode);
         JSONObject jason = new JSONObject(jsonCode);
         JSONArray statuses = jason.getJSONArray("statuses");
@@ -106,6 +106,13 @@ public class JSONLoading {
                 Log.d(TAG, "Done");
             }
         }
+        Tweet[] tweets = new Tweet[tweetsList.size()];
+
+        for (int i = 0; i < tweetsList.size(); i++) {
+            tweets[i] = tweetsList.get(i);
+        }
+
+        return tweets;
     }
     public static ArrayList<Tweet> repliesTo(ArrayList<Tweet> from, Tweet to) {
         ArrayList<Tweet> temp = new ArrayList<Tweet>();

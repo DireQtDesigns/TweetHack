@@ -13,4 +13,10 @@
         android:icon="@drawable/ic_search"
         android:title="Search"
         app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_authtest"
+        android:icon="@drawable/ic_search"
+        android:title="Test auth"
+        app:showAsAction="never"/>
 </menu>

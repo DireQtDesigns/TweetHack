@@ -134,7 +134,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_search:
                 Intent intent = new Intent(MainActivity.this, SearchActivity.class);
                 startActivity(intent);
-                return true;
+                break;
+            case R.id.action_authtest:
+                Intent authIntent = new Intent(MainActivity.this, AuthActivity.class);
+                startActivity(authIntent);
         }
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {

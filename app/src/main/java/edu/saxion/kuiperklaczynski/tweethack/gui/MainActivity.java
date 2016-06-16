@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -44,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static MainActivity instance;
 
-    private final String bearerToken;
-    private final String authToken;
+    private String bearerToken;
+    private String authToken;
 
     public static MainActivity getInstance() {
         if (instance == null) {
@@ -53,28 +55,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return instance;
-    }
-
-    private MainActivity() {
-        super();
-
-        //Getting the bearerToken
-        String tempToken;
-
-        SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
-        tempToken = prefs.getString("BEARERTOKEN", null);
-
-        if (tempToken == null) {
-            Log.d(TAG, "onCreate: generating new BearerToken");
-            new BearerToken().execute(this);
-            bearerToken = prefs.getString("BEARERTOKEN", null);
-        } else {
-            bearerToken = tempToken;
-            Log.d(TAG, "onCreate: BearerToken Already Existed");
-        }
-
-        //getting the authtoken
-        authToken = null;
     }
 
 
@@ -94,6 +74,25 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         BufferedReader br = null;
         StringBuilder sb = new StringBuilder();
+
+        //Getting the bearerToken
+        String tempToken;
+
+        SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
+        tempToken = prefs.getString("BEARERTOKEN", null);
+
+        if (tempToken == null) {
+            Log.d(TAG, "onCreate: generating new BearerToken");
+            new BearerToken().execute(this);
+            bearerToken = prefs.getString("BEARERTOKEN", null);
+        } else {
+            bearerToken = tempToken;
+            Log.d(TAG, "onCreate: BearerToken Already Existed");
+        }
+
+        //getting the authtoken
+        authToken = null;
+
 
         String line;
         try {
@@ -158,10 +157,29 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        switch (item.getItemId()) {
+        switch (id) {
             case R.id.action_search:
-                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-                startActivity(intent);
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+                alert.setTitle("Search");
+                alert.setMessage("Please enter your search terms");
+
+                final EditText input = new EditText(this);
+                alert.setView(input);
+
+                alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        new SearchTask().execute(new String[]{authToken, bearerToken, input.getText().toString()});
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Canceled.
+                    }
+                });
+
+                alert.show();
                 break;
             case R.id.action_authtest:
                 Intent authIntent = new Intent(MainActivity.this, AuthActivity.class);
@@ -194,9 +212,5 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-    }
-
-    private void searchTweets(String searchTerm) {
-        SearchTask.execute(new String[]{authToken, bearerToken, "test"});
     }
 }

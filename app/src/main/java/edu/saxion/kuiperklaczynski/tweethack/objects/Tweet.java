@@ -15,7 +15,7 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.tweet.Place;
 public class Tweet implements Serializable {
 
     private String createdAt;
-    private Integer id;
+    private long id;
     private String idStr;
     private String text;
     //private Annotation annotation cba tho
@@ -98,11 +98,11 @@ public class Tweet implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Integer getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(long id) {
         this.id = id;
     }
 

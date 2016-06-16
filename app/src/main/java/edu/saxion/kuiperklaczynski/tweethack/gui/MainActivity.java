@@ -1,14 +1,10 @@
 package edu.saxion.kuiperklaczynski.tweethack.gui;
 
-import android.app.ActionBar;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,31 +12,23 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import edu.saxion.kuiperklaczynski.tweethack.R;
 import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
 import edu.saxion.kuiperklaczynski.tweethack.net.BearerToken;
 import edu.saxion.kuiperklaczynski.tweethack.net.SearchTask;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
-import edu.saxion.kuiperklaczynski.tweethack.objects.User;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,10 +47,14 @@ public class MainActivity extends AppCompatActivity {
 
 
     public static List<Tweet> tweetsList = new ArrayList<>();
+
     private static final String TAG = "TweetHax_MainActivity"; //Log Tag
     private String jsonCode;
     private static ListView listView;
-    private static TweetListAdapter tweetListAdapter;
+
+    private ListType type;
+    private String seachField = null;
+    private boolean flag_loading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
 
         //getting the authtoken
         authToken = null;
+
+        //setting the tweet list type
+        type = ListType.HOME;
 
 
         String line;
@@ -142,6 +137,31 @@ public class MainActivity extends AppCompatActivity {
         });
 
         setListView();
+
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                switch (type) {
+                    case SEARCH:
+                    if (firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount != 0) {
+                        if (flag_loading == false) {
+                            flag_loading = true;
+                            long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
+                            new SearchTask().execute(new String[]{authToken, bearerToken, seachField, "" + nextid});
+                        }
+                    } break;
+
+                    case HOME:
+
+                        break;
+                }
+            }
+        });
     }
 
     @Override
@@ -169,7 +189,8 @@ public class MainActivity extends AppCompatActivity {
 
                 alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        new SearchTask().execute(new String[]{authToken, bearerToken, input.getText().toString()});
+                        seachField = input.getText().toString();
+                        new SearchTask().execute(new String[]{authToken, bearerToken, seachField, null});
                     }
                 });
 
@@ -199,8 +220,18 @@ public class MainActivity extends AppCompatActivity {
         setListView();
     }
 
+    public void addItems(ArrayList<Tweet> list) {
+        tweetsList.addAll(list);
+        ((TweetListAdapter) listView.getAdapter()).notifyDataSetChanged();
+        flag_loading = false;
+    }
+
+    private void addSearchResults() {
+
+    }
+
     private void setListView() {
-        tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, tweetsList);
+        TweetListAdapter tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, tweetsList);
         listView = (ListView) findViewById(R.id.tweetsListView);
         listView.setAdapter(tweetListAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

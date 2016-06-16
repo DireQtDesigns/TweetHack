@@ -26,12 +26,12 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
 /**
  * Created by Robin on 15-6-2016.
  */
-public class SearchTask extends AsyncTask<String, Void, Tweet[]> {
+public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
     private final String TAG = "SearchTask";
 
 
     @Override
-    protected Tweet[] doInBackground(String... params) {
+    protected ArrayList<Tweet> doInBackground(String... params) {
         String token;
         String identifier;
 
@@ -66,8 +66,14 @@ public class SearchTask extends AsyncTask<String, Void, Tweet[]> {
 
         try {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
             //TODO: add user token support
             conn.addRequestProperty("Authorization", identifier + token);
+
+            if (params[3] != null) {
+                conn.addRequestProperty("max_id", params[3]);
+            }
+
             conn.setRequestMethod("GET");
             if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
                 InputStream is = conn.getInputStream();
@@ -84,7 +90,7 @@ public class SearchTask extends AsyncTask<String, Void, Tweet[]> {
             return null;
         }
 
-        Tweet[] tweets = null;
+        ArrayList<Tweet> tweets = null;
 
         if (jSONObject != null) {
             try {
@@ -103,18 +109,22 @@ public class SearchTask extends AsyncTask<String, Void, Tweet[]> {
         if (tweets == null) {
             Log.d(TAG, "doInBackground: tweets is null");
         }
+
+        if (params[3] != null) {
+            tweets.add(null);
+        }
         return tweets;
     }
 
     @Override
-    protected void onPostExecute(Tweet[] tweets) {
+    protected void onPostExecute(ArrayList<Tweet> tweets) {
         MainActivity m = MainActivity.getInstance();
 
-        ArrayList<Tweet> list = new ArrayList<>();
-
-        for (Tweet t : tweets) {
-            list.add(t);
+        if (tweets.get(tweets.size()-1) == null) {
+            tweets.remove(tweets.size()-1);
+            m.addItems(tweets);
+        } else {
+            m.updateView(tweets);
         }
-        m.updateView(list);
     }
 }

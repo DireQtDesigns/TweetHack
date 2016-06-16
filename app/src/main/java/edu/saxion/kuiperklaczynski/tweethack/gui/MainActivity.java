@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private MainActivity() {
+        super();
 
         //Getting the bearerToken
         String tempToken;
@@ -156,6 +157,15 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_authtest:
+                Intent authIntent = new Intent(MainActivity.this, AuthActivity.class);
+                startActivity(authIntent);
+        }
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;

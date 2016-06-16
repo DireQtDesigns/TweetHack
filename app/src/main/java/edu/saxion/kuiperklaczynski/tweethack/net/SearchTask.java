@@ -71,6 +71,7 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
             conn.addRequestProperty("Authorization", identifier + token);
 
             if (params[3] != null) {
+                //TODO: fix this property, cause it aint working
                 conn.addRequestProperty("max_id", params[3]);
             }
 

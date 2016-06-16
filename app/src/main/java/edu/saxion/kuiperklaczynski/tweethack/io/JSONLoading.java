@@ -55,6 +55,9 @@ public class JSONLoading {
         if(Settings.DEBUG == Settings.IO || Settings.DEBUG == Settings.ALL) Log.d("JSONLoader", jsonCode);
         JSONObject jason = new JSONObject(jsonCode);
         JSONArray statuses = jason.getJSONArray("statuses");
+
+        ArrayList<Tweet> tempTweets = new ArrayList<>();
+
         for (int i = 0; i < statuses.length(); i++) {
             JSONObject jsonStatus = statuses.getJSONObject(i);
             Tweet status = new Tweet(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -91,7 +94,7 @@ public class JSONLoading {
 
             //Finishing up
             status.setUser(user);
-            tweetsList.add(status);
+            tempTweets.add(status);
             tweetsMap.put(status.getIdStr(), status);
 
             if(Settings.DEBUG == Settings.IO || Settings.DEBUG == Settings.ALL) {
@@ -106,10 +109,12 @@ public class JSONLoading {
                 Log.d(TAG, "Done");
             }
         }
-        Tweet[] tweets = new Tweet[tweetsList.size()];
+        tweetsList = tempTweets;
 
-        for (int i = 0; i < tweetsList.size(); i++) {
-            tweets[i] = tweetsList.get(i);
+        Tweet[] tweets = new Tweet[tempTweets.size()];
+
+        for (int i = 0; i < tempTweets.size(); i++) {
+            tweets[i] = tempTweets.get(i);
         }
 
         return tweets;

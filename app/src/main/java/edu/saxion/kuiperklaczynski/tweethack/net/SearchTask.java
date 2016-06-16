@@ -32,8 +32,20 @@ public class SearchTask extends AsyncTask<String, Void, Tweet[]> {
 
     @Override
     protected Tweet[] doInBackground(String... params) {
-        String bearerToken = params[0];
-        String searchQuery = params[1];
+        String token;
+        String identifier;
+
+        if (params[0] != null) {
+            token = params[0];
+            identifier = "AuthToken "; //TODO: correct
+        } else if (params[1] != null) {
+            token = params[1];
+            identifier = "Bearer ";
+        } else {
+            return null;
+        }
+
+        String searchQuery = params[2];
 
         try {
             searchQuery = URLEncoder.encode(searchQuery, "UTF-8");
@@ -54,7 +66,8 @@ public class SearchTask extends AsyncTask<String, Void, Tweet[]> {
 
         try {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.addRequestProperty("Authorization", "Bearer " + bearerToken);
+            //TODO: add user token support
+            conn.addRequestProperty("Authorization", identifier + token);
             conn.setRequestMethod("GET");
             if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
                 InputStream is = conn.getInputStream();

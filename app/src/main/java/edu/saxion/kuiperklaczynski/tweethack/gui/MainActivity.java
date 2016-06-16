@@ -44,12 +44,36 @@ public class MainActivity extends AppCompatActivity {
 
     private static MainActivity instance;
 
+    private final String bearerToken;
+    private final String authToken;
+
     public static MainActivity getInstance() {
         if (instance == null) {
             instance = new MainActivity();
         }
 
         return instance;
+    }
+
+    private MainActivity() {
+
+        //Getting the bearerToken
+        String tempToken;
+
+        SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
+        tempToken = prefs.getString("BEARERTOKEN", null);
+
+        if (tempToken == null) {
+            Log.d(TAG, "onCreate: generating new BearerToken");
+            new BearerToken().execute(this);
+            bearerToken = prefs.getString("BEARERTOKEN", null);
+        } else {
+            bearerToken = tempToken;
+            Log.d(TAG, "onCreate: BearerToken Already Existed");
+        }
+
+        //getting the authtoken
+        authToken = null;
     }
 
 
@@ -97,8 +121,8 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "onCreate: ", e);
         }
 
-        SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
-        final String bearerToken = prefs.getString("BEARERTOKEN", null);
+//        SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
+//        bearerToken = prefs.getString("BEARERTOKEN", null);
 
         if (bearerToken == null) {
             Log.d(TAG, "onCreate: generating new BearerToken");
@@ -159,5 +183,9 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void searchTweets(String searchTerm) {
+        SearchTask.execute(new String[]{authToken, bearerToken, "test"});
     }
 }

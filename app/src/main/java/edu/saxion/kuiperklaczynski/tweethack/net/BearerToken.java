@@ -24,7 +24,6 @@ import org.apache.commons.io.IOUtils;
  */
 public class BearerToken extends AsyncTask<Context,Void,String>{
     private final String API_KEY = "4LiUJZIHjuFT6IVaGBCZooSRw", API_SECRET = "yrxAVjSOd7oyqOKCSwpAVKCsktOlw0rR8ZwjGUOQNnyxiz13QL";
-    //private String BEARER_TOKEN;
 
     private final String TAG = "BearerToken";
 

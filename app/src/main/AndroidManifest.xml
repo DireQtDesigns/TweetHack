@@ -38,6 +38,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity" />
         </activity>
+        <activity android:name=".gui.SearchActivity" />
+        <activity android:name=".gui.AuthActivity"></activity>
     </application>
 
 </manifest>

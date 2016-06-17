@@ -148,13 +148,19 @@ public class MainActivity extends AppCompatActivity {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 switch (type) {
                     case SEARCH:
-                    if (firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount != 0) {
-                        if (flag_loading == false) {
-                            flag_loading = true;
-                            long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
-                            new SearchTask().execute(new String[]{authToken, bearerToken, seachField, "" + nextid});
+                        if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
+                            if (flag_loading == false) {
+                                flag_loading = true;
+                                long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
+                                new SearchTask().execute(new String[]{authToken, bearerToken, seachField, "" + nextid});
+                            }
+                        } else if (firstVisibleItem == 1 && totalItemCount != 0) {
+                            if (flag_loading == false) {
+                                //flag_loading = true;
+                                //add to the top of the screen
+                            }
                         }
-                    } break;
+                        break;
 
                     case HOME:
 
@@ -179,6 +185,8 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.action_search:
+                type = ListType.SEARCH;
+
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
                 alert.setTitle("Search");

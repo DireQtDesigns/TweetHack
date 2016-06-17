@@ -56,11 +56,19 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
 
         URL url;
         try {
-            url = new URL("https://api.twitter.com/1.1/search/tweets.json?q=" + searchQuery);
+            if (params[3] != null) {
+                url = new URL("https://api.twitter.com/1.1/search/tweets.json?q=" + searchQuery + "&max_id=" + params[3]);
+                Log.d(TAG, "doInBackground: loading additional search results");
+            } else {
+                url = new URL("https://api.twitter.com/1.1/search/tweets.json?q=" + searchQuery);
+                Log.d(TAG, "doInBackground: loading search results");
+            }
         } catch (MalformedURLException mue) {
             Log.e(TAG, "doInBackground: ", mue);
             return null;
         }
+
+
 
         JSONObject jSONObject = null;
 
@@ -69,11 +77,6 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
 
             //TODO: add user token support
             conn.addRequestProperty("Authorization", identifier + token);
-
-            if (params[3] != null) {
-                //TODO: fix this property, cause it aint working
-                conn.addRequestProperty("max_id", params[3]);
-            }
 
             conn.setRequestMethod("GET");
             if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {

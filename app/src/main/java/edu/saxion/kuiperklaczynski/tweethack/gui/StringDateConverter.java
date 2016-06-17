@@ -62,7 +62,7 @@ public class StringDateConverter {
         format.setLenient(true);
         try {
             date = format.parse(twitterFormat);
-            Log.d(TAG, "dateFromJSONString: Original: "+twitterFormat+" Filter: "+LARGE_TWITTER_DATE_FORMAT+" Final: "+date);
+            //Log.d(TAG, "dateFromJSONString: Original: "+twitterFormat+" Filter: "+LARGE_TWITTER_DATE_FORMAT+" Final: "+date);
         } catch (ParseException e) {
             Log.e(TAG, "dateFromJSONString: ", e);
         }

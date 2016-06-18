@@ -35,6 +35,7 @@ public class StringDateConverter {
 
     public static String agoString(long currentMillis, Date given) {
         String s = "";
+        if (given == null) return "";
         long givenMillis = given.getTime();
         long difference = currentMillis - givenMillis;
         if(Settings.DEBUG == Settings.GUI || Settings.DEBUG == Settings.ALL) Log.d(TAG, "agoString, Difference: "+difference+"     Current: "+System.currentTimeMillis()+"     given: "+given.getTime());
@@ -61,10 +62,11 @@ public class StringDateConverter {
         SimpleDateFormat format = new SimpleDateFormat(LARGE_TWITTER_DATE_FORMAT);
         format.setLenient(true);
         try {
+            //TODO throws parseExceptions when running on a real phone
             date = format.parse(twitterFormat);
             //Log.d(TAG, "dateFromJSONString: Original: "+twitterFormat+" Filter: "+LARGE_TWITTER_DATE_FORMAT+" Final: "+date);
         } catch (ParseException e) {
-            Log.e(TAG, "dateFromJSONString: ", e);
+            //Log.e(TAG, "dateFromJSONString: ", e);
         }
         return date;
     }

@@ -27,6 +27,7 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
  * Created by Leonk on 26-4-2016.
  */
 public class TweetListAdapter extends ArrayAdapter<Tweet> {
+    private final String TAG = "TweetListAdapter";
 
     private List<Tweet> tweets;
 
@@ -57,7 +58,11 @@ public class TweetListAdapter extends ArrayAdapter<Tweet> {
 
         //Setting values
         nameView.setText(tweet.getUser().getName());
-        timeView.setText(StringDateConverter.agoString(System.currentTimeMillis(), StringDateConverter.dateFromJSONString(tweet.getCreated_at())));
+        if (tweet.getCreated_at() == null) {
+            Log.d(TAG, "getView: getCreated_at() is null");
+        } else {
+            timeView.setText(StringDateConverter.agoString(System.currentTimeMillis(), StringDateConverter.dateFromJSONString(tweet.getCreated_at())));
+        }
         bodyView.setText(tweet.getText());
 
         //Image fetching from URL

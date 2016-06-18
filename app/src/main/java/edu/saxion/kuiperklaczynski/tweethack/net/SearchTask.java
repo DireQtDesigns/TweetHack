@@ -57,7 +57,7 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
         URL url;
         try {
             if (params[3] != null) {
-                url = new URL("https://api.twitter.com/1.1/search/tweets.json?q=" + searchQuery + "&max_id=" + params[3]);
+                url = new URL("https://api.twitter.com/1.1/search/tweets.json?q=" + searchQuery + params[3]);
                 Log.d(TAG, "doInBackground: loading additional search results");
             } else {
                 url = new URL("https://api.twitter.com/1.1/search/tweets.json?q=" + searchQuery);
@@ -115,6 +115,11 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
         }
 
         if (params[3] != null) {
+            Log.d(TAG, "doInBackground: there is an additional modifier present");
+            if (params[3].contains("since_id")) {
+                Log.d(TAG, "doInBackground: since_id has been used");
+                tweets.add(null);
+            }
             tweets.add(null);
         }
         return tweets;
@@ -126,7 +131,12 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
 
         if (tweets.get(tweets.size()-1) == null) {
             tweets.remove(tweets.size()-1);
-            m.addItems(tweets);
+            if (tweets.get(tweets.size()-1) == null) {
+                tweets.remove(tweets.size()-1);
+                m.topUpItems(tweets);
+            } else {
+                m.addItems(tweets);
+            }
         } else {
             m.updateView(tweets);
         }

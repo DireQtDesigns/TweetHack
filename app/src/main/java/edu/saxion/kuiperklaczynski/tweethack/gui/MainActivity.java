@@ -17,6 +17,10 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.github.scribejava.apis.TwitterApi;
+import com.github.scribejava.core.builder.ServiceBuilder;
+import com.github.scribejava.core.oauth.OAuth10aService;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +39,13 @@ public class MainActivity extends AppCompatActivity {
     private static MainActivity instance;
 
     private String bearerToken;
+
+    public void addBearerToken(String s) {
+        if (bearerToken == null) {
+            bearerToken = s;
+        }
+    }
+
     private String authToken;
 
     public static MainActivity getInstance() {
@@ -64,8 +75,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        BufferedReader br = null;
-        StringBuilder sb = new StringBuilder();
 
         //Getting the bearerToken
         String tempToken;
@@ -76,57 +85,20 @@ public class MainActivity extends AppCompatActivity {
         if (tempToken == null) {
             Log.d(TAG, "onCreate: generating new BearerToken");
             new BearerToken().execute(this);
-            bearerToken = prefs.getString("BEARERTOKEN", null);
         } else {
             bearerToken = tempToken;
             Log.d(TAG, "onCreate: BearerToken Already Existed");
         }
 
-        //getting the authtoken
+        //getting the authtoken TODO: auth token getting
         authToken = null;
 
         //setting the tweet list type
-        type = ListType.HOME;
-
-
-        String line;
-        try {
-            InputStream is = getAssets().open("tweets.json");
-            br = new BufferedReader(new InputStreamReader(is));
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        if (type == null) {
+            //TODO: if you re-enter this activity, it always sets type to HOME
+            Log.d(TAG, "onCreate: set type to HOME");
+            type = ListType.HOME;
         }
-        Log.d(TAG, "onCreate: " + sb.toString());
-        jsonCode = sb.toString();
-        try {
-            JSONLoading.readJSON(jsonCode);
-            tweetsList = JSONLoading.tweetsList;
-        }catch (Exception e) {
-            Log.e(TAG, "onCreate: ", e);
-        }
-
-//        SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
-//        bearerToken = prefs.getString("BEARERTOKEN", null);
-
-        if (bearerToken == null) {
-            Log.d(TAG, "onCreate: generating new BearerToken");
-            new BearerToken().execute(this);
-        } else {
-            Log.d(TAG, "onCreate: BearerToken Already Existed");
-        }
-
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -139,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
         setListView();
 
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            private long time = 0;
+
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
 
@@ -146,18 +120,33 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+
+                //makes sure you can't spam updates so twitter doesn't time your ass out
+                if (time + 5 > System.currentTimeMillis()/1000) {
+                    return;
+                } else {
+                    time = System.currentTimeMillis()/1000;
+                }
+
+                Log.d(TAG, "onScroll: scrolling using " + type);
+
                 switch (type) {
                     case SEARCH:
+                        //TODO: switch around down and up registering to stop an unlikely bug.
                         if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
+                            Log.d(TAG, "onScroll: scrolling down in Search");
                             if (flag_loading == false) {
                                 flag_loading = true;
                                 long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
-                                new SearchTask().execute(new String[]{authToken, bearerToken, seachField, "" + nextid});
+                                new SearchTask().execute(new String[]{authToken, bearerToken, seachField, "&max_id=" + nextid});
                             }
-                        } else if (firstVisibleItem == 1 && totalItemCount != 0) {
+                        } else if (firstVisibleItem < 2 && totalItemCount != 0) {
+                            Log.d(TAG, "onScroll: scrolling up in Search");
                             if (flag_loading == false) {
-                                //flag_loading = true;
-                                //add to the top of the screen
+                                flag_loading = true;
+                                long sinceID = tweetsList.get(0).getId();
+                                new SearchTask().execute(new String[]{authToken,bearerToken,seachField, "&since_id=" + sinceID});
                             }
                         }
                         break;
@@ -234,8 +223,44 @@ public class MainActivity extends AppCompatActivity {
         flag_loading = false;
     }
 
-    private void addSearchResults() {
+    private ArrayList<Tweet> tempTweets = new ArrayList<>();
 
+    public void topUpItems(ArrayList<Tweet> list) {
+        if (list.size() == 0) {
+            if (tempTweets.size() != 0) {
+                topUpHelper();
+            }
+        } else {
+            if (tweetsList.contains(list.get(list.size() - 1))) {
+                Log.d(TAG, "topUpItems: list contains item in tweetList");
+                tempTweets.addAll(list);
+
+                topUpHelper();
+            } else {
+                Log.d(TAG, "topUpItems: list does not contain item in tweetList");
+                tempTweets.addAll(list);
+
+                long sinceID = tweetsList.get(0).getId();
+                long maxID = tempTweets.get(tempTweets.size() - 1).getId() - 1;
+                new SearchTask().execute(new String[]{authToken, bearerToken, seachField, "&since_id=" + sinceID + "&max_id=" + maxID});
+            }
+        }
+        flag_loading = false;
+    }
+
+    private void topUpHelper() {
+        for (int i = tempTweets.size() - 1; i >= 0 ; i--) {
+            if (tweetsList.contains(tempTweets.get(i))) {
+                tempTweets.remove(i);
+            } else {
+                for (int j = tempTweets.size() - 1; j >= 0; j--) {
+                    tweetsList.add(0,tempTweets.get(j));
+                }
+                tempTweets = new ArrayList<>();
+                break;
+            }
+        }
+        ((TweetListAdapter) listView.getAdapter()).notifyDataSetChanged();
     }
 
     private void setListView() {

@@ -115,6 +115,25 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        if(prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
+            Log.d(TAG, "onCreate: User already authenticated, no need to ask for re-authorisation");
+        } else {
+            Intent intent = new Intent(this, AuthActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
+        if(prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
+            Log.d(TAG, "onCreate: User alreally authenticated, no need to ask for re-authorisation");
+        } else {
+            Intent intent = new Intent(this, AuthActivity.class);
+            startActivity(intent);
+        }
+        super.onResume();
     }
 
     @Override
@@ -138,6 +157,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_authtest:
                 Intent authIntent = new Intent(MainActivity.this, AuthActivity.class);
                 startActivity(authIntent);
+                break;
+            case R.id.action_logout:
+                SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
+                prefs.edit().remove("access_token").apply();
+                prefs.edit().remove("access_token_secret").apply();
+                break;
         }
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {

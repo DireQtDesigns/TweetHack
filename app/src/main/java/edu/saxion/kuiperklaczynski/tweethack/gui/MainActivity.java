@@ -17,14 +17,6 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.github.scribejava.apis.TwitterApi;
-import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.oauth.OAuth10aService;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String authToken;
+    private String accessToken, accessTokenSecret;
 
     public static MainActivity getInstance() {
         if (instance == null) {
@@ -92,7 +84,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //getting the authtoken TODO: auth token getting
-        authToken = null;
+        if(prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
+            fillAccessTokens(prefs.getString("access_token", null), prefs.getString("access_token_secret", null));
+            Log.d(TAG, "onCreate: User already authenticated, no need to ask for re-authorisation");
+        } else {
+            Intent intent = new Intent(this, AuthActivity.class);
+            startActivity(intent);
+        }
 
         //setting the tweet list type
         if (type == null) {
@@ -142,14 +140,14 @@ public class MainActivity extends AppCompatActivity {
                             if (flag_loading == false) {
                                 flag_loading = true;
                                 long sinceID = tweetsList.get(0).getId();
-                                new SearchTask().execute(new String[]{authToken,bearerToken,seachField, "&since_id=" + sinceID});
+                                new SearchTask().execute(new String[]{accessToken, accessTokenSecret ,bearerToken,seachField, "&since_id=" + sinceID});
                             }
                         } else if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
                             Log.d(TAG, "onScroll: scrolling down in Search");
                             if (flag_loading == false) {
                                 flag_loading = true;
                                 long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
-                                new SearchTask().execute(new String[]{authToken, bearerToken, seachField, "&max_id=" + nextid});
+                                new SearchTask().execute(new String[]{accessToken, accessTokenSecret, bearerToken, seachField, "&max_id=" + nextid});
                             }
                         }
                         break;
@@ -160,27 +158,20 @@ public class MainActivity extends AppCompatActivity {
                             if (flag_loading == false) {
                                 flag_loading = true;
                                 long sinceID = tweetsList.get(0).getId();
-                                new TimeLineTask().execute(new String[]{authToken, "&since_id=" + sinceID});
+                                new TimeLineTask().execute(new String[]{accessToken, accessTokenSecret, "&since_id=" + sinceID});
                             }
                         } else if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
                             Log.d(TAG, "onScroll: scrolling down in Home");
                             if (flag_loading == false) {
                                 flag_loading = true;
                                 long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
-                                new TimeLineTask().execute(new String[]{authToken, "&max_id=" + nextid});
+                                new TimeLineTask().execute(new String[]{accessToken, accessTokenSecret, "&max_id=" + nextid});
                             }
                         }
                         break;
                 }
             }
         });
-
-        if(prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
-            Log.d(TAG, "onCreate: User already authenticated, no need to ask for re-authorisation");
-        } else {
-            Intent intent = new Intent(this, AuthActivity.class);
-            startActivity(intent);
-        }
     }
 
     @Override
@@ -213,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
                 type = ListType.HOME;
                 ((Toolbar)findViewById(R.id.toolbar)).setTitle("Home");
 
-                new TimeLineTask().execute(authToken);
+                new TimeLineTask().execute(accessToken, accessTokenSecret, null);
 
                 break;
 
@@ -233,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
                         seachField = input.getText().toString();
                         ((Toolbar)findViewById(R.id.toolbar)).setTitle("Search Results: " + seachField);
 
-                        new SearchTask().execute(new String[]{authToken, bearerToken, seachField, null});
+                        new SearchTask().execute(new String[]{accessToken, accessTokenSecret, bearerToken, seachField, null});
                     }
                 });
 
@@ -267,6 +258,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void fillAccessTokens(String accessToken, String accessTokenSecret) {
+        if (this.accessToken == null && this.accessTokenSecret == null && accessToken != null && accessTokenSecret != null) {
+            this.accessToken = accessToken;
+            this.accessTokenSecret = accessTokenSecret;
+        }
     }
 
     public void updateView(ArrayList<Tweet> list) {
@@ -307,9 +305,9 @@ public class MainActivity extends AppCompatActivity {
                 long maxID = tempTweets.get(tempTweets.size() - 1).getId() - 1;
 
                 if (type == ListType.HOME) {
-                    new TimeLineTask().execute(new String[]{authToken, "&since_id=" + sinceID + "&max_id=" + maxID});
+                    new TimeLineTask().execute(new String[]{accessToken, accessTokenSecret, "&since_id=" + sinceID + "&max_id=" + maxID});
                 } else if (type == ListType.SEARCH) {
-                    new SearchTask().execute(new String[]{authToken, bearerToken, seachField, "&since_id=" + sinceID + "&max_id=" + maxID});
+                    new SearchTask().execute(new String[]{accessToken, accessTokenSecret, bearerToken, seachField, "&since_id=" + sinceID + "&max_id=" + maxID});
                 }
             }
         }

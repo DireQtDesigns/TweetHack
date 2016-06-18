@@ -3,9 +3,17 @@ package edu.saxion.kuiperklaczynski.tweethack.net;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.github.scribejava.core.model.OAuth1AccessToken;
+import com.github.scribejava.core.model.OAuthRequest;
+import com.github.scribejava.core.model.Response;
+import com.github.scribejava.core.model.Verb;
+import com.github.scribejava.core.oauth.OAuth10aService;
+
 import org.apache.commons.io.IOUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,41 +35,33 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
     @Override
     protected ArrayList<Tweet> doInBackground(String... params) {
 
-        String authToken = params[0];
+        OAuth1AccessToken accessToken = new OAuth1AccessToken(params[0], params[1]);
 
-        URL url;
-        try {
-            if (params[1] != null) {
-                url = new URL("https://api.twitter.com/1.1/statuses/home_timeline.json" + params[1]);
+        String url;
+
+            if (params[2] != null) {
+                url = ("https://api.twitter.com/1.1/statuses/home_timeline.json" + params[2]);
             } else {
-                url = new URL("https://api.twitter.com/1.1/statuses/home_timeline.json");
+                url = ("https://api.twitter.com/1.1/statuses/home_timeline.json");
             }
-        } catch (MalformedURLException mue) {
-            Log.e(TAG, "doInBackground: ", mue);
-            return null;
-        }
+
 
         JSONObject jSONObject = null;
 
+        OAuth10aService service = RequestTokenTask.service;
+        Response response;
+
+        OAuthRequest request = new OAuthRequest(Verb.GET, url, service);
+        service.signRequest(accessToken, request);
+        response = request.send();
+
+        Log.d(TAG, "doInBackground: response code: " + response.getCode());
+
         try {
-            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-
-            conn.addRequestProperty("Authorization", authToken);
-            conn.setRequestMethod("GET");
-
-            if (HttpsURLConnection.HTTP_OK == conn.getResponseCode()) {
-                InputStream is = conn.getInputStream();
-                String response = IOUtils.toString(is, "UTF-8");
-                IOUtils.closeQuietly(is);
-
-                jSONObject = new JSONObject(response);
-            } else {
-                Log.d(TAG, "doInBackground: httpstatus = " + conn.getResponseCode());
-            }
-            conn.disconnect();
+            jSONObject = new JSONObject(response.getBody());
         } catch (Exception e) {
             Log.e(TAG, "doInBackground: ", e);
-            return null;
+            throw new RuntimeException(e);
         }
 
         ArrayList<Tweet> tweets;

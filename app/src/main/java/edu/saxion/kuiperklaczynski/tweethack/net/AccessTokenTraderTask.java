@@ -13,6 +13,8 @@ import com.github.scribejava.core.model.OAuth1AccessToken;
 import com.github.scribejava.core.model.OAuth1RequestToken;
 import com.github.scribejava.core.oauth.OAuth10aService;
 
+import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
+
 /**
  * Created by Robin on 24-5-2016.
  */
@@ -42,6 +44,7 @@ public class AccessTokenTraderTask extends AsyncTask<Context,Void,String>{
         SharedPreferences prefs = c.getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", c.MODE_PRIVATE);
         prefs.edit().putString("access_token", accessToken.getToken()).apply();
         prefs.edit().putString("access_token_secret", accessToken.getTokenSecret()).apply();
+        MainActivity.getInstance().fillAccessTokens(accessToken.getToken(), accessToken.getTokenSecret());
         Toast.makeText(c, "Login successful:"+accessToken.getToken(), Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onPostExecute: " + s);
     }

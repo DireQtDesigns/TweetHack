@@ -26,6 +26,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import edu.saxion.kuiperklaczynski.tweethack.gui.AuthActivity;
+import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
 
 /**
  * Created by Robin on 24-5-2016.
@@ -37,7 +38,7 @@ public class RequestTokenTask extends AsyncTask<Context,Void,String>{
     private final String TAG = "RequestToken";
     private OAuth1RequestToken requestToken;
 
-    final OAuth10aService service = new ServiceBuilder()
+    public static final OAuth10aService service = new ServiceBuilder()
                 .apiKey(API_KEY)
                 .apiSecret(API_SECRET)
                 .callback(callback)

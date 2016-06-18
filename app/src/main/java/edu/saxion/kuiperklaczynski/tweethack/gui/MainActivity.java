@@ -134,19 +134,19 @@ public class MainActivity extends AppCompatActivity {
                 switch (type) {
                     case SEARCH:
                         //TODO: switch around down and up registering to stop an unlikely bug.
-                        if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
-                            Log.d(TAG, "onScroll: scrolling down in Search");
-                            if (flag_loading == false) {
-                                flag_loading = true;
-                                long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
-                                new SearchTask().execute(new String[]{authToken, bearerToken, seachField, "&max_id=" + nextid});
-                            }
-                        } else if (firstVisibleItem < 2 && totalItemCount != 0) {
+                        if (firstVisibleItem < 2 && totalItemCount != 0) {
                             Log.d(TAG, "onScroll: scrolling up in Search");
                             if (flag_loading == false) {
                                 flag_loading = true;
                                 long sinceID = tweetsList.get(0).getId();
                                 new SearchTask().execute(new String[]{authToken,bearerToken,seachField, "&since_id=" + sinceID});
+                            }
+                        } else if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
+                            Log.d(TAG, "onScroll: scrolling down in Search");
+                            if (flag_loading == false) {
+                                flag_loading = true;
+                                long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
+                                new SearchTask().execute(new String[]{authToken, bearerToken, seachField, "&max_id=" + nextid});
                             }
                         }
                         break;

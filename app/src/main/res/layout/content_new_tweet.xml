@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="edu.saxion.kuiperklaczynski.tweethack.gui.NewTweetActivity"
+    tools:showIn="@layout/activity_new_tweet"
+    android:orientation="vertical">
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="110dp"
+        android:id="@+id/newTweetEditText"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/new_tweet_frame_layout"
+        android:layout_marginBottom="10dp"
+        android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus leo risus, sollicitudin in lectus non, fringilla tincidunt augue posuere."
+        android:padding="7dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="114dp"
+            android:layout_height="43dp"
+            android:text="Send"
+            android:id="@+id/newTweetSendButton"
+            android:background="@drawable/button_frame_background"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="140"
+            android:id="@+id/newTweetCharsRemaining"
+            android:gravity="end"
+            android:layout_marginRight="10dp"
+            android:textColor="#757575" />
+    </LinearLayout>
+
+</LinearLayout>

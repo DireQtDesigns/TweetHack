@@ -82,6 +82,8 @@ public class Tweet implements Serializable {
         this.withheld_scope = withheld_scope;
     }
 
+    public Tweet() {}
+
     public Boolean isFavorited() {
         return favorited;
     }

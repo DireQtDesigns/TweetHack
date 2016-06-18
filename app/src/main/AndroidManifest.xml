@@ -39,7 +39,11 @@
                 android:value="edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity" />
         </activity>
         <activity android:name=".gui.SearchActivity" />
-        <activity android:name=".gui.AuthActivity"></activity>
+        <activity android:name=".gui.AuthActivity" />
+        <activity
+            android:name=".gui.NewTweetActivity"
+            android:label="@string/title_activity_new_tweet"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

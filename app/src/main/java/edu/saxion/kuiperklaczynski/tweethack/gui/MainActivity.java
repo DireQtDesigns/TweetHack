@@ -104,7 +104,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new SearchTask().execute(new String[]{bearerToken, "test"});
+                Intent newTweetIntent = new Intent(MainActivity.this, NewTweetActivity.class);
+                startActivity(newTweetIntent);
             }
         });
 

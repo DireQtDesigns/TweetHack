@@ -12,6 +12,6 @@ public class Settings {
     public static final int ALL = 1337;
 
     //Debug setting:
-    public static final int DEBUG = ALL;
+    public static final int DEBUG = 0;
 
 }

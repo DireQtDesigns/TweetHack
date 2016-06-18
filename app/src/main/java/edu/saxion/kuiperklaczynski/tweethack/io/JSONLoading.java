@@ -51,13 +51,16 @@ public class JSONLoading {
      * @throws JSONException If object or data cannot be found etc.
      * @throws IOException If file cannot be found.
      */
-    public static void readJSON(String jsonCode) throws JSONException, IOException {
+    public static ArrayList<Tweet> readJSON(String jsonCode) throws JSONException, IOException {
         if(Settings.DEBUG == Settings.IO || Settings.DEBUG == Settings.ALL) Log.d("JSONLoader", jsonCode);
         JSONObject jason = new JSONObject(jsonCode);
         JSONArray statuses = jason.getJSONArray("statuses");
+
+        ArrayList<Tweet> tempTweets = new ArrayList<>();
+
         for (int i = 0; i < statuses.length(); i++) {
             JSONObject jsonStatus = statuses.getJSONObject(i);
-            Tweet status = new Tweet(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+            Tweet status = new Tweet(null, null, 0, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
             User user = new User(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
@@ -82,6 +85,7 @@ public class JSONLoading {
             status.setText(jsonStatus.getString("text"));
             status.setCreated_at(jsonStatus.getString("created_at"));
             status.setIn_reply_to_status_id_str(jsonStatus.getString("in_reply_to_status_id_str"));
+            status.setId(jsonStatus.getLong("id"));
             //TODO MOAR info
 
             //Set user info
@@ -93,7 +97,7 @@ public class JSONLoading {
 
             //Finishing up
             status.setUser(user);
-            tweetsList.add(status);
+            tempTweets.add(status);
             tweetsMap.put(status.getIdStr(), status);
 
             if(Settings.DEBUG == Settings.IO || Settings.DEBUG == Settings.ALL) {
@@ -108,7 +112,12 @@ public class JSONLoading {
                 Log.d(TAG, "Done");
             }
         }
+        tweetsList = tempTweets;
+
+
+        return tempTweets;
     }
+
     public static ArrayList<Tweet> repliesTo(ArrayList<Tweet> from, Tweet to) {
         ArrayList<Tweet> temp = new ArrayList<Tweet>();
         for(Tweet t : from) {

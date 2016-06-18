@@ -1,118 +1,160 @@
 package edu.saxion.kuiperklaczynski.tweethack.gui;
 
-import android.app.ActionBar;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.github.scribejava.apis.TwitterApi;
+import com.github.scribejava.core.builder.ServiceBuilder;
+import com.github.scribejava.core.oauth.OAuth10aService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import edu.saxion.kuiperklaczynski.tweethack.R;
 import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
 import edu.saxion.kuiperklaczynski.tweethack.net.BearerToken;
+import edu.saxion.kuiperklaczynski.tweethack.net.SearchTask;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
-import edu.saxion.kuiperklaczynski.tweethack.objects.User;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static MainActivity instance;
+
+    private String bearerToken;
+
+    public void addBearerToken(String s) {
+        if (bearerToken == null) {
+            bearerToken = s;
+        }
+    }
+
+    private String authToken;
+
+    public static MainActivity getInstance() {
+        if (instance == null) {
+            instance = new MainActivity();
+        }
+
+        return instance;
+    }
+
 
     public static List<Tweet> tweetsList = new ArrayList<>();
+
     private static final String TAG = "TweetHax_MainActivity"; //Log Tag
     private String jsonCode;
+    private static ListView listView;
+
+    private ListType type;
+    private String seachField = null;
+    private boolean flag_loading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        instance = this;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        BufferedReader br = null;
-        StringBuilder sb = new StringBuilder();
 
-        String line;
-        try {
-            InputStream is = getAssets().open("tweets.json");
-            br = new BufferedReader(new InputStreamReader(is));
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        Log.d(TAG, "onCreate: " + sb.toString());
-        jsonCode = sb.toString();
-        try {
-            JSONLoading.readJSON(jsonCode);
-            tweetsList = JSONLoading.tweetsList;
-        }catch (Exception e) {
-            Log.e(TAG, "onCreate: ", e);
-        }
+        //Getting the bearerToken
+        String tempToken;
 
         SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
-        String bearerToken = prefs.getString("BEARERTOKEN", null);
+        tempToken = prefs.getString("BEARERTOKEN", null);
 
-        if (bearerToken == null) {
+        if (tempToken == null) {
             Log.d(TAG, "onCreate: generating new BearerToken");
             new BearerToken().execute(this);
         } else {
+            bearerToken = tempToken;
             Log.d(TAG, "onCreate: BearerToken Already Existed");
         }
 
+        //getting the authtoken TODO: auth token getting
+        authToken = null;
 
+        //setting the tweet list type
+        if (type == null) {
+            //TODO: if you re-enter this activity, it always sets type to HOME
+            Log.d(TAG, "onCreate: set type to HOME");
+            type = ListType.HOME;
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "TODO: Everything, you fucking idiot!", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                new SearchTask().execute(new String[]{bearerToken, "test"});
             }
         });
 
-        TweetListAdapter tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, tweetsList);
-        final ListView tweetsListView = (ListView) findViewById(R.id.tweetsListView);
-        tweetsListView.setAdapter(tweetListAdapter);
-        tweetsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        setListView();
+
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            private long time = 0;
+
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MainActivity.this, TweetDetailActivity.class);
-                Tweet tweet = tweetsList.get(position);
-                intent.putExtra("TweetID", tweet.getIdStr());
-                startActivity(intent);
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+
+                //makes sure you can't spam updates so twitter doesn't time your ass out
+                if (time + 5 > System.currentTimeMillis()/1000) {
+                    return;
+                } else {
+                    time = System.currentTimeMillis()/1000;
+                }
+
+                Log.d(TAG, "onScroll: scrolling using " + type);
+
+                switch (type) {
+                    case SEARCH:
+                        //TODO: switch around down and up registering to stop an unlikely bug.
+                        if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
+                            Log.d(TAG, "onScroll: scrolling down in Search");
+                            if (flag_loading == false) {
+                                flag_loading = true;
+                                long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
+                                new SearchTask().execute(new String[]{authToken, bearerToken, seachField, "&max_id=" + nextid});
+                            }
+                        } else if (firstVisibleItem < 2 && totalItemCount != 0) {
+                            Log.d(TAG, "onScroll: scrolling up in Search");
+                            if (flag_loading == false) {
+                                flag_loading = true;
+                                long sinceID = tweetsList.get(0).getId();
+                                new SearchTask().execute(new String[]{authToken,bearerToken,seachField, "&since_id=" + sinceID});
+                            }
+                        }
+                        break;
+
+                    case HOME:
+
+                        break;
+                }
             }
         });
 
@@ -149,10 +191,32 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        switch (item.getItemId()) {
+        switch (id) {
             case R.id.action_search:
-                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-                startActivity(intent);
+                type = ListType.SEARCH;
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+                alert.setTitle("Search");
+                alert.setMessage("Please enter your search terms");
+
+                final EditText input = new EditText(this);
+                alert.setView(input);
+
+                alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        seachField = input.getText().toString();
+                        new SearchTask().execute(new String[]{authToken, bearerToken, seachField, null});
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // Canceled.
+                    }
+                });
+
+                alert.show();
                 break;
             case R.id.action_authtest:
                 Intent authIntent = new Intent(MainActivity.this, AuthActivity.class);
@@ -178,5 +242,70 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void updateView(ArrayList<Tweet> list) {
+        tweetsList = list;
 
+        setListView();
+    }
+
+    public void addItems(ArrayList<Tweet> list) {
+        tweetsList.addAll(list);
+        ((TweetListAdapter) listView.getAdapter()).notifyDataSetChanged();
+        flag_loading = false;
+    }
+
+    private ArrayList<Tweet> tempTweets = new ArrayList<>();
+
+    public void topUpItems(ArrayList<Tweet> list) {
+        if (list.size() == 0) {
+            if (tempTweets.size() != 0) {
+                topUpHelper();
+            }
+        } else {
+            if (tweetsList.contains(list.get(list.size() - 1))) {
+                Log.d(TAG, "topUpItems: list contains item in tweetList");
+                tempTweets.addAll(list);
+
+                topUpHelper();
+            } else {
+                Log.d(TAG, "topUpItems: list does not contain item in tweetList");
+                tempTweets.addAll(list);
+
+                long sinceID = tweetsList.get(0).getId();
+                long maxID = tempTweets.get(tempTweets.size() - 1).getId() - 1;
+                new SearchTask().execute(new String[]{authToken, bearerToken, seachField, "&since_id=" + sinceID + "&max_id=" + maxID});
+            }
+        }
+        flag_loading = false;
+    }
+
+    private void topUpHelper() {
+        for (int i = tempTweets.size() - 1; i >= 0 ; i--) {
+            if (tweetsList.contains(tempTweets.get(i))) {
+                tempTweets.remove(i);
+            } else {
+                for (int j = tempTweets.size() - 1; j >= 0; j--) {
+                    tweetsList.add(0,tempTweets.get(j));
+                }
+                tempTweets = new ArrayList<>();
+                break;
+            }
+        }
+        ((TweetListAdapter) listView.getAdapter()).notifyDataSetChanged();
+    }
+
+    private void setListView() {
+        TweetListAdapter tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, tweetsList);
+        listView = (ListView) findViewById(R.id.tweetsListView);
+        listView.setAdapter(tweetListAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, TweetDetailActivity.class);
+                Tweet tweet = tweetsList.get(position);
+                intent.putExtra("TweetID", tweet.getIdStr());
+                startActivity(intent);
+            }
+        });
+    }
 }

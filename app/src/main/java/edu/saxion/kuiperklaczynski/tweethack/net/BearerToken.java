@@ -19,12 +19,13 @@ import java.net.URL;
 import java.net.URLEncoder;
 import org.apache.commons.io.IOUtils;
 
+import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
+
 /**
  * Created by Robin on 24-5-2016.
  */
 public class BearerToken extends AsyncTask<Context,Void,String>{
     private final String API_KEY = "4LiUJZIHjuFT6IVaGBCZooSRw", API_SECRET = "yrxAVjSOd7oyqOKCSwpAVKCsktOlw0rR8ZwjGUOQNnyxiz13QL";
-    //private String BEARER_TOKEN;
 
     private final String TAG = "BearerToken";
 
@@ -123,8 +124,8 @@ public class BearerToken extends AsyncTask<Context,Void,String>{
         SharedPreferences prefs = c.getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", c.MODE_PRIVATE);
 
         prefs.edit().putString("BEARERTOKEN", s).apply();
-
-        Log.d(TAG, "onPostExecute: " + s);
+        MainActivity m = MainActivity.getInstance();
+        m.addBearerToken(s);
     }
 
     @Override

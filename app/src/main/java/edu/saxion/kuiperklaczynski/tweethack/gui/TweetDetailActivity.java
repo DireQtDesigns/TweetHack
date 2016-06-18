@@ -67,7 +67,9 @@ public class TweetDetailActivity extends AppCompatActivity {
             timeAgo = StringDateConverter.agoString(System.currentTimeMillis(), StringDateConverter.dateFromJSONString(detailTweet.getCreated_at()));
             id_str = detailTweet.getIdStr();
         }
-        repliesTo = JSONLoading.repliesTo(tweetsList, detailTweet);
+        //TODO: add replies using network
+        //commented out because this needs to be networking shiz
+        //repliesTo = JSONLoading.repliesTo(tweetsList, detailTweet);
         tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, repliesTo); //TODO Implement actual tweets list, the above only filters out the non-replies to the dummy tweets
         ListView replyList = (ListView) findViewById(R.id.tweetDetailReplyList);
         if (repliesTo.size() > 0) {

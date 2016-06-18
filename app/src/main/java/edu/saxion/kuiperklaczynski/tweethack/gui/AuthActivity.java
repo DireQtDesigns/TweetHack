@@ -38,12 +38,13 @@ public class AuthActivity extends AppCompatActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 try {
-                    if(url.contains("4chan.org") && requestToken != null);
-                    Uri uri = Uri.parse(url);
-                    String verifier = uri.getQueryParameter("oauth_verifier");
-                    Log.d(TAG, "shouldOverrideUrlLoading: "+requestToken.getToken());
-                    new AccessTokenTraderTask(requestToken, verifier, getApplicationContext()).execute();
-                    finish();
+                    if(url.contains("4chan.org") && requestToken != null) {
+                        Uri uri = Uri.parse(url);
+                        String verifier = uri.getQueryParameter("oauth_verifier");
+                        Log.d(TAG, "shouldOverrideUrlLoading: " + requestToken.getToken());
+                        new AccessTokenTraderTask(requestToken, verifier, getApplicationContext()).execute();
+                        finish();
+                    }
                 } catch (Exception e) {
                     Log.e(TAG, "shouldOverrideUrlLoading: ", e);
                 }

@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
         if(prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
-            Log.d(TAG, "onCreate: User alreally authenticated, no need to ask for re-authorisation");
+            Log.d(TAG, "onCreate: User already authenticated, no need to ask for re-authorisation");
         } else {
             Intent intent = new Intent(this, AuthActivity.class);
             startActivity(intent);
@@ -162,6 +162,12 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
                 prefs.edit().remove("access_token").apply();
                 prefs.edit().remove("access_token_secret").apply();
+                if(prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
+                    Log.d(TAG, "onCreate: User already authenticated, no need to ask for re-authorisation");
+                } else {
+                    Intent reAuthIntent = new Intent(this, AuthActivity.class);
+                    startActivity(reAuthIntent);
+                }
                 break;
         }
         //noinspection SimplifiableIfStatement

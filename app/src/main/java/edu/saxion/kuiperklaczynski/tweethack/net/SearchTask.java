@@ -4,20 +4,15 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import org.apache.commons.io.IOUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
 import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
@@ -133,7 +128,7 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
             tweets.remove(tweets.size()-1);
             if (tweets.get(tweets.size()-1) == null) {
                 tweets.remove(tweets.size()-1);
-                m.topUpItems(tweets);
+                m.topUpSearch(tweets);
             } else {
                 m.addItems(tweets);
             }

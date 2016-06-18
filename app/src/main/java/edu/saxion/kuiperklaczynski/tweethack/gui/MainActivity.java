@@ -133,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (type) {
                     case SEARCH:
-                        //TODO: switch around down and up registering to stop an unlikely bug.
                         if (firstVisibleItem < 2 && totalItemCount != 0) {
                             Log.d(TAG, "onScroll: scrolling up in Search");
                             if (flag_loading == false) {
@@ -187,6 +186,8 @@ public class MainActivity extends AppCompatActivity {
                 alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         seachField = input.getText().toString();
+                        ((Toolbar)findViewById(R.id.toolbar)).setTitle("Search Results: " + seachField);
+
                         new SearchTask().execute(new String[]{authToken, bearerToken, seachField, null});
                     }
                 });
@@ -225,19 +226,24 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Tweet> tempTweets = new ArrayList<>();
 
-    public void topUpItems(ArrayList<Tweet> list) {
+    public void topUpSearch(ArrayList<Tweet> list) {
         if (list.size() == 0) {
             if (tempTweets.size() != 0) {
-                topUpHelper();
+                int currentposition = listView.getLastVisiblePosition() + tempTweets.size();
+
+                topUpHelper(currentposition);
             }
         } else {
             if (tweetsList.contains(list.get(list.size() - 1))) {
-                Log.d(TAG, "topUpItems: list contains item in tweetList");
+                Log.d(TAG, "topUpSearch: list contains item in tweetList");
+
                 tempTweets.addAll(list);
 
-                topUpHelper();
+                int currentposition = listView.getLastVisiblePosition() + tempTweets.size();
+
+                topUpHelper(currentposition);
             } else {
-                Log.d(TAG, "topUpItems: list does not contain item in tweetList");
+                Log.d(TAG, "topUpSearch: list does not contain item in tweetList");
                 tempTweets.addAll(list);
 
                 long sinceID = tweetsList.get(0).getId();
@@ -248,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
         flag_loading = false;
     }
 
-    private void topUpHelper() {
+    private void topUpHelper(int viewPosition) {
         for (int i = tempTweets.size() - 1; i >= 0 ; i--) {
             if (tweetsList.contains(tempTweets.get(i))) {
                 tempTweets.remove(i);
@@ -260,6 +266,10 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
         }
+
+        //makes you come back to your original location when loading new tweets
+        listView.smoothScrollToPosition(viewPosition);
+
         ((TweetListAdapter) listView.getAdapter()).notifyDataSetChanged();
     }
 

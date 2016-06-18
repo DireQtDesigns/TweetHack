@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.TextureView;
 import android.view.View;
@@ -22,6 +23,8 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
 
 public class NewTweetActivity extends AppCompatActivity {
 
+    private static final String TAG = "NewTweetAct";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +39,7 @@ public class NewTweetActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 remainingTextView.setText(140 - bodyEditText.getText().length());
-                if(bodyEditText.getText().length() > 100) {
+                if (bodyEditText.getText().length() > 100) {
                     bodyEditText.setTextColor(Color.RED);
                 } else {
                     bodyEditText.setTextColor(Color.rgb(50, 50, 50));
@@ -55,9 +58,9 @@ public class NewTweetActivity extends AppCompatActivity {
                 Tweet tweet = new Tweet();
                 tweet.setText(bodyEditText.getText().toString());
                 new SendTweetTask(tweet, getApplicationContext(), accessToken).execute();
+                finish();
             }
         });
-
 
 
     }

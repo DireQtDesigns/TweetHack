@@ -32,6 +32,7 @@ import edu.saxion.kuiperklaczynski.tweethack.R;
 import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
 import edu.saxion.kuiperklaczynski.tweethack.net.BearerToken;
 import edu.saxion.kuiperklaczynski.tweethack.net.SearchTask;
+import edu.saxion.kuiperklaczynski.tweethack.net.TimeLineTask;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
 
 public class MainActivity extends AppCompatActivity {
@@ -95,9 +96,14 @@ public class MainActivity extends AppCompatActivity {
 
         //setting the tweet list type
         if (type == null) {
-            //TODO: if you re-enter this activity, it always sets type to HOME
-            Log.d(TAG, "onCreate: set type to HOME");
-            type = ListType.HOME;
+            //decides what the type is based on the content of the Toolbar, since everytime you open tweetDetailActivity it forgets the type
+
+            String toolbarTitle = ((Toolbar)findViewById(R.id.toolbar)).getTitle().toString();
+            if (toolbarTitle.contains("TweetHack") || toolbarTitle.contains("Home")) {
+                type = ListType.HOME;
+            } else if (toolbarTitle.contains("Search")){
+                type = ListType.SEARCH;
+            }
         }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -120,8 +126,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-
                 //makes sure you can't spam updates so twitter doesn't time your ass out
                 if (time + 5 > System.currentTimeMillis()/1000) {
                     return;
@@ -151,7 +155,21 @@ public class MainActivity extends AppCompatActivity {
                         break;
 
                     case HOME:
-
+                        if (firstVisibleItem < 2 && totalItemCount != 0) {
+                            Log.d(TAG, "onScroll: scrolling up in Home");
+                            if (flag_loading == false) {
+                                flag_loading = true;
+                                long sinceID = tweetsList.get(0).getId();
+                                new TimeLineTask().execute(new String[]{authToken, "&since_id=" + sinceID});
+                            }
+                        } else if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
+                            Log.d(TAG, "onScroll: scrolling down in Home");
+                            if (flag_loading == false) {
+                                flag_loading = true;
+                                long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
+                                new TimeLineTask().execute(new String[]{authToken, "&max_id=" + nextid});
+                            }
+                        }
                         break;
                 }
             }
@@ -172,6 +190,14 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id) {
+            case R.id.action_home:
+                type = ListType.HOME;
+                ((Toolbar)findViewById(R.id.toolbar)).setTitle("Home");
+
+                new TimeLineTask().execute(authToken);
+
+                break;
+
             case R.id.action_search:
                 type = ListType.SEARCH;
 
@@ -226,29 +252,34 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Tweet> tempTweets = new ArrayList<>();
 
-    public void topUpSearch(ArrayList<Tweet> list) {
+    public void topUpTweetsList(ArrayList<Tweet> list, ListType type) {
         if (list.size() == 0) {
             if (tempTweets.size() != 0) {
-                int currentposition = listView.getLastVisiblePosition() + tempTweets.size();
+                int currentPosition = listView.getLastVisiblePosition() + tempTweets.size();
 
-                topUpHelper(currentposition);
+                topUpHelper(currentPosition);
             }
         } else {
             if (tweetsList.contains(list.get(list.size() - 1))) {
-                Log.d(TAG, "topUpSearch: list contains item in tweetList");
+                Log.d(TAG, "topUpTweetsList: list contains item in tweetList");
 
                 tempTweets.addAll(list);
 
-                int currentposition = listView.getLastVisiblePosition() + tempTweets.size();
+                int currentPosition = listView.getLastVisiblePosition() + tempTweets.size();
 
-                topUpHelper(currentposition);
+                topUpHelper(currentPosition);
             } else {
-                Log.d(TAG, "topUpSearch: list does not contain item in tweetList");
+                Log.d(TAG, "topUpTweetsList: list does not contain item in tweetList");
                 tempTweets.addAll(list);
 
                 long sinceID = tweetsList.get(0).getId();
                 long maxID = tempTweets.get(tempTweets.size() - 1).getId() - 1;
-                new SearchTask().execute(new String[]{authToken, bearerToken, seachField, "&since_id=" + sinceID + "&max_id=" + maxID});
+
+                if (type == ListType.HOME) {
+                    new TimeLineTask().execute(new String[]{authToken, "&since_id=" + sinceID + "&max_id=" + maxID});
+                } else if (type == ListType.SEARCH) {
+                    new SearchTask().execute(new String[]{authToken, bearerToken, seachField, "&since_id=" + sinceID + "&max_id=" + maxID});
+                }
             }
         }
         flag_loading = false;

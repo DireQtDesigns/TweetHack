@@ -8,12 +8,14 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import javax.net.ssl.HttpsURLConnection;
+
+import edu.saxion.kuiperklaczynski.tweethack.gui.ListType;
 import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
 import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
@@ -32,7 +34,7 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
 
         if (params[0] != null) {
             token = params[0];
-            identifier = "AuthToken "; //TODO: correct
+            identifier = "";
         } else if (params[1] != null) {
             token = params[1];
             identifier = "Bearer ";
@@ -68,13 +70,13 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
         JSONObject jSONObject = null;
 
         try {
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
 
             //TODO: add user token support
             conn.addRequestProperty("Authorization", identifier + token);
 
             conn.setRequestMethod("GET");
-            if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
+            if (HttpsURLConnection.HTTP_OK == conn.getResponseCode()) {
                 InputStream is = conn.getInputStream();
                 String response = IOUtils.toString(is, "UTF-8");
                 IOUtils.closeQuietly(is);
@@ -89,7 +91,7 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
             return null;
         }
 
-        ArrayList<Tweet> tweets = null;
+        ArrayList<Tweet> tweets;
 
         if (jSONObject != null) {
             try {
@@ -99,7 +101,7 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
                 return null;
             }
         } else {
-            Log.d(TAG, "doInBackground: jSONObeject was null");
+            Log.d(TAG, "doInBackground: jSONObject was null");
             return null;
         }
 
@@ -128,7 +130,7 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
             tweets.remove(tweets.size()-1);
             if (tweets.get(tweets.size()-1) == null) {
                 tweets.remove(tweets.size()-1);
-                m.topUpSearch(tweets);
+                m.topUpTweetsList(tweets, ListType.SEARCH);
             } else {
                 m.addItems(tweets);
             }

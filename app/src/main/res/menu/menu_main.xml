@@ -25,4 +25,9 @@
         android:icon="@drawable/ic_search"
         android:title="Test auth"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_logout"
+        android:title="Logout"
+        app:showAsAction="never"/>
 </menu>

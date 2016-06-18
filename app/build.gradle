@@ -27,5 +27,4 @@ dependencies {
     compile 'commons-io:commons-io:2.4'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.scribejava:scribejava-core:2.7.3'
-    compile 'com.github.scribejava:scribejava-apis:2.5.3'
 }

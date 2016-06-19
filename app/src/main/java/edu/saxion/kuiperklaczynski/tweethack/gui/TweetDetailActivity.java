@@ -32,8 +32,10 @@ import java.util.Map;
 import edu.saxion.kuiperklaczynski.tweethack.R;
 import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
 import edu.saxion.kuiperklaczynski.tweethack.net.DownloadImageTask;
+import edu.saxion.kuiperklaczynski.tweethack.net.FavoriteTask;
 import edu.saxion.kuiperklaczynski.tweethack.net.RetweetTask;
 import edu.saxion.kuiperklaczynski.tweethack.net.URLTesting;
+import edu.saxion.kuiperklaczynski.tweethack.net.UnFavoriteTask;
 import edu.saxion.kuiperklaczynski.tweethack.net.UnRetweetTask;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
 import edu.saxion.kuiperklaczynski.tweethack.objects.User;
@@ -102,6 +104,7 @@ public class TweetDetailActivity extends AppCompatActivity {
         TextView bodyView = (TextView) findViewById(R.id.tweetDetailBodyView);
         ImageView avatarView = (ImageView) findViewById(R.id.tweetDetailAvatarView);
         final ImageView retweetView = (ImageView) findViewById(R.id.tweetDetailRetweet);
+        final ImageView favoriteView = (ImageView) findViewById(R.id.tweetDetailFavorite);
         final EditText replyField = (EditText) findViewById(R.id.tweetDetailReplyField);
 
 
@@ -134,6 +137,20 @@ public class TweetDetailActivity extends AppCompatActivity {
                 } else {
                     new UnRetweetTask(retweetView, detailTweet.getId(), accessToken).execute();
                     Toast.makeText(getApplicationContext(), "Reverting retweet...", Toast.LENGTH_SHORT);
+                }
+            }
+        });
+
+        favoriteView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OAuth1AccessToken accessToken = getAccessToken();
+                if(favoriteView.getAlpha() < 0.7) {
+                    new FavoriteTask(favoriteView, detailTweet.getId(), accessToken).execute();
+                    Toast.makeText(getApplicationContext(), "Favoriting...", Toast.LENGTH_SHORT);
+                } else {
+                    new UnFavoriteTask(favoriteView, detailTweet.getId(), accessToken).execute();
+                    Toast.makeText(getApplicationContext(), "Reverting favorite...", Toast.LENGTH_SHORT);
                 }
             }
         });

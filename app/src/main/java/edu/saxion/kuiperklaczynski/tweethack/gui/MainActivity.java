@@ -16,6 +16,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.github.scribejava.apis.TwitterApi;
 import com.github.scribejava.core.builder.ServiceBuilder;
@@ -294,6 +295,9 @@ public class MainActivity extends AppCompatActivity {
         tweetsList.addAll(list);
         ((TweetListAdapter) listView.getAdapter()).notifyDataSetChanged();
         flag_loading = false;
+
+        Toast toast = Toast.makeText(this, "Added older results", Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     private ArrayList<Tweet> tempTweets = new ArrayList<>();
@@ -307,6 +311,8 @@ public class MainActivity extends AppCompatActivity {
                 topUpHelper(currentPosition);
             } else {
                 Log.d(TAG, "topUpTweetsList: list was empty, temptweets was empty");
+                Toast toast = Toast.makeText(this, "no new results", Toast.LENGTH_SHORT);
+                toast.show();
             }
         } else {
             if (tweetsList.contains(list.get(list.size() - 1))) {
@@ -375,6 +381,10 @@ public class MainActivity extends AppCompatActivity {
         listView.smoothScrollToPosition(viewPosition);
 
         ((TweetListAdapter) listView.getAdapter()).notifyDataSetChanged();
+
+        Toast toast = Toast.makeText(this, "Added new results", Toast.LENGTH_SHORT);
+        toast.show();
+
     }
 
     private void setListView() {

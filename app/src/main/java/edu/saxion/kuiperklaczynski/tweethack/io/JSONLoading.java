@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -85,6 +86,7 @@ public class JSONLoading {
             status.setText(jsonStatus.getString("text"));
             status.setCreated_at(jsonStatus.getString("created_at"));
             status.setIn_reply_to_status_id_str(jsonStatus.getString("in_reply_to_status_id_str"));
+
             status.setId(jsonStatus.getLong("id"));
             //TODO MOAR info
 

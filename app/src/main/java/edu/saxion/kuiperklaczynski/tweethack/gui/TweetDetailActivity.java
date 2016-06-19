@@ -120,7 +120,7 @@ public class TweetDetailActivity extends AppCompatActivity {
     private void sendTweet(String text, View view) {
         Intent intent = new Intent(this, NewTweetActivity.class);
         intent.putExtra("body", text);
-        intent.putExtra("replyTo", detailTweet.getIn_reply_to_status_id());
+        intent.putExtra("replyTo", detailTweet.getId());
         startActivity(intent);
     }
 

@@ -21,7 +21,7 @@ import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
 public class AccessTokenTraderTask extends AsyncTask<Context,Void,String>{
     private static final String API_KEY = "4LiUJZIHjuFT6IVaGBCZooSRw", API_SECRET = "yrxAVjSOd7oyqOKCSwpAVKCsktOlw0rR8ZwjGUOQNnyxiz13QL";
     private static String callback = "http://www.4chan.org";
-    private final String TAG = "RequestToken";
+    private final String TAG = "AccessTokenTask";
     private String verifier;
     private OAuth1RequestToken requestToken;
     private OAuth1AccessToken accessToken;

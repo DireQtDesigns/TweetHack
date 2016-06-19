@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new SearchTask().execute(new String[]{bearerToken, "test"});
+
             }
         });
 
@@ -209,8 +209,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.action_search:
-                type = ListType.SEARCH;
-
                 listView.setClickable(false);
 
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -223,6 +221,8 @@ public class MainActivity extends AppCompatActivity {
 
                 alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
+                        type = ListType.SEARCH;
+
                         seachField = input.getText().toString();
                         ((Toolbar) findViewById(R.id.toolbar)).setTitle("Search Results: " + seachField);
 

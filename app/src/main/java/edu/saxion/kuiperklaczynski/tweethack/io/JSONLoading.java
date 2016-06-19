@@ -121,7 +121,6 @@ public class JSONLoading {
         JSONArray statuses = jason.getJSONArray("statuses");
 
         return readJSONArray(statuses);
-
     }
 
     public static ArrayList<Tweet> repliesTo(ArrayList<Tweet> from, Tweet to) {

@@ -64,6 +64,11 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
             service.signRequest(accessToken, request);
             response = request.send();
 
+            if (response.getCode() != 200) {
+                Log.d(TAG, "doInBackground: code was " + response.getCode());
+                return null;
+            }
+
             try {
                 jSONObject = new JSONObject(response.getBody());
             } catch (Exception e) {

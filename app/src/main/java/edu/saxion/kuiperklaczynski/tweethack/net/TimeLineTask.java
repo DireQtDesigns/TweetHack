@@ -42,11 +42,11 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
 
         String url;
 
-            if (params[2] != null) {
-                url = ("https://api.twitter.com/1.1/statuses/home_timeline.json" + params[2]);
-            } else {
-                url = ("https://api.twitter.com/1.1/statuses/home_timeline.json");
-            }
+        if (params[2] != null) {
+            url = ("https://api.twitter.com/1.1/statuses/home_timeline.json" + params[2]);
+        } else {
+            url = ("https://api.twitter.com/1.1/statuses/home_timeline.json");
+        }
 
         JSONArray jsonArray;
 
@@ -57,7 +57,10 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
         service.signRequest(accessToken, request);
         response = request.send();
 
-        Log.d(TAG, "doInBackground: response code: " + response.getCode());
+        if (response.getCode() != 200) {
+            Log.d(TAG, "doInBackground: response was " + response.getCode());
+            return null;
+        }
 
         try {
             jsonArray = new JSONArray(response.getBody());
@@ -102,7 +105,7 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
         MainActivity m = MainActivity.getInstance();
 
         if (tweets.size() != 0) {
-            if (tweets.get(tweets.size()-1) == null) {
+            if (tweets.get(tweets.size() - 1) == null) {
                 tweets.remove(tweets.size() - 1);
 
                 if (tweets.size() != 0) {

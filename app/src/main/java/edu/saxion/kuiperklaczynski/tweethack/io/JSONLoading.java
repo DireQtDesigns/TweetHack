@@ -53,7 +53,7 @@ public class JSONLoading {
         for (int i = 0; i < statuses.length(); i++) {
             JSONObject jsonStatus = statuses.getJSONObject(i);
             Tweet status = new Tweet(null, null, 0, null, null, null, null, null, null, null, null, null, null, 0, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-            User user = new User(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+            User user = new User(null, null, null, null, null, null, null, null, null, null, null, null, 0, null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
             //OR...... Just make an empty constructor, i was being an idiot, don't mind
@@ -81,12 +81,7 @@ public class JSONLoading {
             status.setId(jsonStatus.getLong("id"));
             //TODO MOAR info
 
-            //Set user info
-            user.setName(jsonUser.getString("name"));
-            user.setProfile_image_url(jsonUser.getString("profile_image_url"));
-            user.setScreenname(jsonUser.getString("screen_name"));
-            user.setProfile_banner_url("profile_banner_url");
-            //TODO ALL THE STUFFS
+            fillUser(jsonUser, user);
 
             //Finishing up
             status.setUser(user);
@@ -123,6 +118,16 @@ public class JSONLoading {
         JSONArray statuses = jason.getJSONArray("statuses");
 
         return readJSONArray(statuses);
+    }
+
+    public static void fillUser(JSONObject jsonUser, User user) throws JSONException {
+        //Set user info
+        user.setName(jsonUser.getString("name"));
+        user.setProfile_image_url(jsonUser.getString("profile_image_url"));
+        user.setScreenname(jsonUser.getString("screen_name"));
+        user.setProfile_banner_url("profile_banner_url");
+        user.setId(jsonUser.getLong("id"));
+        //TODO ALL THE STUFFS
     }
 
     public static ArrayList<Tweet> repliesTo(ArrayList<Tweet> from, Tweet to) {

@@ -34,7 +34,9 @@ import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
 import edu.saxion.kuiperklaczynski.tweethack.net.BearerToken;
 import edu.saxion.kuiperklaczynski.tweethack.net.SearchTask;
 import edu.saxion.kuiperklaczynski.tweethack.net.TimeLineTask;
+import edu.saxion.kuiperklaczynski.tweethack.net.VerifyCredentialsTask;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
+import edu.saxion.kuiperklaczynski.tweethack.objects.User;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,7 +50,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String accessToken, accessTokenSecret;
+    private static String accessToken, accessTokenSecret;
+
+    public static String getAccessToken() {
+        return accessToken;
+    }
+
+    public static String getAccessTokenSecret() {
+        return accessTokenSecret;
+    }
 
     public static MainActivity getInstance() {
         if (instance == null) {
@@ -61,8 +71,30 @@ public class MainActivity extends AppCompatActivity {
 
     public static List<Tweet> tweetsList = new ArrayList<>();
 
+    public static User getUser(long id) {
+        for (Tweet t: tweetsList) {
+            if (t.getUser().getId() == id) {
+                return t.getUser();
+            }
+        }
+        return null;
+    }
+
+    private static User user;
+
+    public void fillUser(User u) {
+        if (user == null && u != null) {
+            user = u;
+            SharedPreferences prefs = this.getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", this.MODE_PRIVATE);
+            prefs.edit().putLong("user_id", u.getId());
+        }
+    }
+
+    public static User getUser() {
+        return user;
+    }
+
     private static final String TAG = "TweetHax_MainActivity"; //Log Tag
-    private String jsonCode;
     private static ListView listView;
 
     private ListType type;
@@ -96,6 +128,9 @@ public class MainActivity extends AppCompatActivity {
         if (prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
             fillAccessTokens(prefs.getString("access_token", null), prefs.getString("access_token_secret", null));
             Log.d(TAG, "onCreate: User already authenticated, no need to ask for re-authorisation");
+            if (user == null) {
+                new VerifyCredentialsTask().execute(new String[]{accessToken, accessTokenSecret});
+            }
         } else {
             Intent intent = new Intent(this, AuthActivity.class);
             startActivity(intent);
@@ -252,11 +287,24 @@ public class MainActivity extends AppCompatActivity {
 
                 alert.show();
                 break;
+
+            case R.id.action_profile:
+                if (user == null) {
+                    Toast.makeText(this, "we don't have any user info on you right now", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+
+                tweetsList.clear();
+                Intent profileIntent = new Intent(this, UserActivity.class);
+                startActivity(profileIntent);
+                break;
+
             case R.id.action_authtest:
                 tweetsList.clear();
                 Intent authIntent = new Intent(MainActivity.this, AuthActivity.class);
                 startActivity(authIntent);
                 break;
+
             case R.id.action_logout:
                 tweetsList.clear();
                 SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);

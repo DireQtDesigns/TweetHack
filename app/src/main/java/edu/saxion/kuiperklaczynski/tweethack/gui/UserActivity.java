@@ -1,64 +1,92 @@
 package edu.saxion.kuiperklaczynski.tweethack.gui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import edu.saxion.kuiperklaczynski.tweethack.R;
-import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
 import edu.saxion.kuiperklaczynski.tweethack.net.DownloadImageTask;
+import edu.saxion.kuiperklaczynski.tweethack.net.UserTweetsTask;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
 import edu.saxion.kuiperklaczynski.tweethack.objects.User;
 
 public class UserActivity extends AppCompatActivity {
 
+    private static UserActivity instance;
+
+    public static UserActivity getInstance() {
+        if (instance == null) {
+            return new UserActivity();
+        }
+
+        return instance;
+    }
+
+    private User user;
+
     public static List<Tweet> tweetsList = new ArrayList<>();
-    public static Map<String, Tweet> tweetsMap = new HashMap<>(); //id_str is key
+
+    public void addTweetsList(ArrayList<Tweet> list) {
+        tweetsList.addAll(list);
+        ((TweetListAdapter)tweetsListView.getAdapter()).notifyDataSetChanged();
+        flag_loading = false;
+    }
+
+    private boolean flag_loading = false;
+
     private static final String TAG = "TweetHax_MainActivity"; //Log Tag
     private String fullName, username, avatarURL, bannerURL;
+    ListView tweetsListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        instance = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
-        tweetsList = JSONLoading.tweetsList;
-        tweetsMap = JSONLoading.tweetsMap;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if(getIntent().getStringExtra("TweetID") == null) {
-            Log.e(TAG, "onCreate: TweetID = null");
+        if(getIntent().getLongExtra("TweetID", -1) != -1) {
+            Log.e(TAG, "onCreate: has a tweetID");
+            user = MainActivity.getUser(getIntent().getLongExtra("TweetID", -1));
         } else {
-            User user = tweetsMap.get(getIntent().getStringExtra("TweetID")).getUser();
-            fullName = user.getName();
-            username = user.getScreenname();
-            avatarURL = user.getProfile_image_url();
-            bannerURL = user.getProfile_banner_url();
+            Log.d(TAG, "onCreate: getting user from MainActivity");
+            user = MainActivity.getUser();
+            if (user == null) {
+                Log.e(TAG, "onCreate: User was null");
+            }
         }
+
+        getUserTweets(-1);
+
+        fullName = user.getName();
+        username = user.getScreenname();
+        avatarURL = user.getProfile_image_url();
+        bannerURL = user.getProfile_banner_url();
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent newTweetIntent = new Intent(view.getContext(), NewTweetActivity.class);
+                startActivity(newTweetIntent);
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         TweetListAdapter tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, tweetsList);
-        ListView tweetsListView = (ListView) findViewById(R.id.userTweetsListView);
+        tweetsListView = (ListView) findViewById(R.id.userTweetsListView);
         tweetsListView.setAdapter(tweetListAdapter);
 
         TextView nameView = (TextView) findViewById(R.id.fullNameView);
@@ -71,6 +99,41 @@ public class UserActivity extends AppCompatActivity {
         usernameView.setText("@" + username);
         new DownloadImageTask(avatarView).execute(avatarURL);
         new DownloadImageTask(bannerView).execute(bannerURL);
+
+        tweetsListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            long time = 0;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (time + 15 > System.currentTimeMillis() / 1000) {
+                    return;
+                } else {
+                    time = System.currentTimeMillis() / 1000;
+                }
+
+                if (firstVisibleItem + visibleItemCount >= totalItemCount - 5) {
+                    if (!flag_loading) {
+                        getUserTweets(tweetsList.get(tweetsList.size()-1).getId());
+                    }
+                }
+            }
+        });
+    }
+
+    private void getUserTweets(long maxID) {
+        flag_loading = true;
+        String s;
+        if (maxID != -1) {
+            s = "&max_id=" + maxID;
+        } else {
+            s = "";
+        }
+        new UserTweetsTask().execute(MainActivity.getAccessToken(), MainActivity.getAccessTokenSecret(), user.getId() + "", s);
     }
 
 }

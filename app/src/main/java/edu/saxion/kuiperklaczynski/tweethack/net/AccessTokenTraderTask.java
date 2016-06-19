@@ -47,6 +47,8 @@ public class AccessTokenTraderTask extends AsyncTask<Context,Void,String>{
         MainActivity.getInstance().fillAccessTokens(accessToken.getToken(), accessToken.getTokenSecret());
         Toast.makeText(c, "Login successful:"+accessToken.getToken(), Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onPostExecute: " + s);
+
+        new VerifyCredentialsTask().execute(new String[]{accessToken.getToken(), accessToken.getTokenSecret()});
     }
 
     @Override

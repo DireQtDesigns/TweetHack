@@ -5,4 +5,5 @@
     <string name="title_activity_tweet_detail">TweetDetailActivity</string>
     <string name="action_home">Home</string>
     <string name="title_activity_new_tweet">Status update</string>
+    <string name="action_my_profile">My Profile</string>
 </resources>

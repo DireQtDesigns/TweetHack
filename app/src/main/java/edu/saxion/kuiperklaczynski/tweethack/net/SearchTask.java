@@ -134,9 +134,9 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
             Log.d(TAG, "doInBackground: tweets is null");
         }
 
-        if (params[3] != null) {
+        if (params[4] != null) {
             Log.d(TAG, "doInBackground: there is an additional modifier present");
-            if (params[3].contains("since_id")) {
+            if (params[4].contains("since_id")) {
                 Log.d(TAG, "doInBackground: since_id has been used");
                 tweets.add(null);
             }

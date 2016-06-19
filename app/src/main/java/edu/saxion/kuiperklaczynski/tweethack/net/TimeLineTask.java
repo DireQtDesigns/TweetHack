@@ -10,11 +10,14 @@ import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
 
 import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -40,13 +43,12 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
         String url;
 
             if (params[2] != null) {
-                url = ("https://api.twitter.com/1.1/statuses/home_timeline.json" + params[2]);
+                url = ("https://api.twitter.com/1.1/statuses/home_timeline.json?count=2" + params[2]);
             } else {
-                url = ("https://api.twitter.com/1.1/statuses/home_timeline.json");
+                url = ("https://api.twitter.com/1.1/statuses/home_timeline.json?count=2");
             }
 
-
-        JSONObject jSONObject = null;
+        JSONArray jsonArray = null;
 
         OAuth10aService service = RequestTokenTask.service;
         Response response;
@@ -57,10 +59,14 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
 
         Log.d(TAG, "doInBackground: response code: " + response.getCode());
 
+        String s = null;
         try {
-            jSONObject = new JSONObject(response.getBody());
+            s = response.getBody();
+
+            jsonArray = new JSONArray(s);
         } catch (Exception e) {
-            Log.e(TAG, "doInBackground: ", e);
+
+            //Log.d(TAG, "doInBackground: " + s);
             throw new RuntimeException(e);
         }
 
@@ -84,9 +90,9 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
             Log.d(TAG, "doInBackground: tweets is null");
         }
 
-        if (params[3] != null) {
+        if (params[2] != null) {
             Log.d(TAG, "doInBackground: there is an additional modifier present");
-            if (params[3].contains("since_id")) {
+            if (params[2].contains("since_id")) {
                 Log.d(TAG, "doInBackground: since_id has been used");
                 tweets.add(null);
             }
@@ -100,16 +106,21 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
     protected void onPostExecute(ArrayList<Tweet> tweets) {
         MainActivity m = MainActivity.getInstance();
 
-        if (tweets.get(tweets.size()-1) == null) {
-            tweets.remove(tweets.size()-1);
+        if (tweets.size() != 0) {
             if (tweets.get(tweets.size()-1) == null) {
-                tweets.remove(tweets.size()-1);
-                m.topUpTweetsList(tweets, ListType.HOME);
-            } else {
+                tweets.remove(tweets.size() - 1);
+
+                if (tweets.size() != 0) {
+                    if (tweets.get(tweets.size() - 1) == null) {
+                        tweets.remove(tweets.size() - 1);
+                        m.topUpTweetsList(tweets, ListType.HOME);
+                        return;
+                    }
+                }
                 m.addItems(tweets);
+                return;
             }
-        } else {
-            m.updateView(tweets);
         }
+        m.updateView(tweets);
     }
 }

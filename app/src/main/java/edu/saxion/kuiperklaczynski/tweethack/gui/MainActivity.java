@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //getting the authtoken TODO: auth token getting
-        if(prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
+        if (prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
             fillAccessTokens(prefs.getString("access_token", null), prefs.getString("access_token_secret", null));
             Log.d(TAG, "onCreate: User already authenticated, no need to ask for re-authorisation");
         } else {
@@ -92,17 +92,17 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
 
-        //setting the tweet list type
-        if (type == null) {
-            //decides what the type is based on the content of the Toolbar, since everytime you open tweetDetailActivity it forgets the type
+        //decides what the type is based on the content of the Toolbar, since everytime you open tweetDetailActivity it forgets the type
 
-            String toolbarTitle = ((Toolbar)findViewById(R.id.toolbar)).getTitle().toString();
-            if (toolbarTitle.contains("TweetHack") || toolbarTitle.contains("Home")) {
-                type = ListType.HOME;
-            } else if (toolbarTitle.contains("Search")){
-                type = ListType.SEARCH;
-            }
+        String toolbarTitle = ((Toolbar) findViewById(R.id.toolbar)).getTitle().toString();
+        if (toolbarTitle.contains("TweetHack") || toolbarTitle.contains("Home")) {
+            Log.d(TAG, "onCreate: Setting type to Home");
+            type = ListType.HOME;
+        } else if (toolbarTitle.contains("Search")) {
+            Log.d(TAG, "onCreate: Setting type to Search");
+            type = ListType.SEARCH;
         }
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -125,26 +125,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 //makes sure you can't spam updates so twitter doesn't time your ass out
-                if (time + 5 > System.currentTimeMillis()/1000) {
+                if (time + 5 > System.currentTimeMillis() / 1000) {
                     return;
                 } else {
-                    time = System.currentTimeMillis()/1000;
+                    time = System.currentTimeMillis() / 1000;
                 }
 
                 Log.d(TAG, "onScroll: scrolling using " + type);
 
                 switch (type) {
                     case SEARCH:
-                        if (firstVisibleItem < 2 && totalItemCount != 0) {
+                        if (firstVisibleItem < 5 && totalItemCount != 0) {
                             Log.d(TAG, "onScroll: scrolling up in Search");
-                            if (flag_loading == false) {
+                            if (!flag_loading) {
                                 flag_loading = true;
                                 long sinceID = tweetsList.get(0).getId();
-                                new SearchTask().execute(new String[]{accessToken, accessTokenSecret ,bearerToken,seachField, "&since_id=" + sinceID});
+                                new SearchTask().execute(new String[]{accessToken, accessTokenSecret, bearerToken, seachField, "&since_id=" + sinceID});
                             }
                         } else if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
                             Log.d(TAG, "onScroll: scrolling down in Search");
-                            if (flag_loading == false) {
+                            if (!flag_loading) {
                                 flag_loading = true;
                                 long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
                                 new SearchTask().execute(new String[]{accessToken, accessTokenSecret, bearerToken, seachField, "&max_id=" + nextid});
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
-        if(prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
+        if (prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
             Log.d(TAG, "onCreate: User already authenticated, no need to ask for re-authorisation");
         } else {
             Intent intent = new Intent(this, AuthActivity.class);
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)  {
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
         switch (id) {
             case R.id.action_home:
                 type = ListType.HOME;
-                ((Toolbar)findViewById(R.id.toolbar)).setTitle("Home");
+                ((Toolbar) findViewById(R.id.toolbar)).setTitle("Home");
 
                 new TimeLineTask().execute(accessToken, accessTokenSecret, null);
 
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                 alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         seachField = input.getText().toString();
-                        ((Toolbar)findViewById(R.id.toolbar)).setTitle("Search Results: " + seachField);
+                        ((Toolbar) findViewById(R.id.toolbar)).setTitle("Search Results: " + seachField);
 
                         new SearchTask().execute(new String[]{accessToken, accessTokenSecret, bearerToken, seachField, null});
                     }
@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
                 prefs.edit().remove("access_token").apply();
                 prefs.edit().remove("access_token_secret").apply();
-                if(prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
+                if (prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
                     Log.d(TAG, "onCreate: User already authenticated, no need to ask for re-authorisation");
                 } else {
                     Intent reAuthIntent = new Intent(this, AuthActivity.class);
@@ -315,12 +315,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void topUpHelper(int viewPosition) {
-        for (int i = tempTweets.size() - 1; i >= 0 ; i--) {
+        for (int i = tempTweets.size() - 1; i >= 0; i--) {
             if (tweetsList.contains(tempTweets.get(i))) {
                 tempTweets.remove(i);
             } else {
                 for (int j = tempTweets.size() - 1; j >= 0; j--) {
-                    tweetsList.add(0,tempTweets.get(j));
+                    tweetsList.add(0, tempTweets.get(j));
                 }
                 tempTweets = new ArrayList<>();
                 break;

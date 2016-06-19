@@ -439,14 +439,5 @@ public class MainActivity extends AppCompatActivity {
         TweetListAdapter tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, tweetsList);
         listView = (ListView) findViewById(R.id.tweetsListView);
         listView.setAdapter(tweetListAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MainActivity.this, TweetDetailActivity.class);
-                Tweet tweet = tweetsList.get(position);
-                intent.putExtra("TweetID", tweet.getIdStr());
-                startActivity(intent);
-            }
-        });
     }
 }

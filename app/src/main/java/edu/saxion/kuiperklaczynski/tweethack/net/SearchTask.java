@@ -2,23 +2,27 @@ package edu.saxion.kuiperklaczynski.tweethack.net;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.github.scribejava.core.model.OAuth1AccessToken;
+import com.github.scribejava.core.model.OAuthRequest;
+import com.github.scribejava.core.model.Response;
+import com.github.scribejava.core.model.Verb;
+import com.github.scribejava.core.oauth.OAuth10aService;
 
 import org.apache.commons.io.IOUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
+import javax.net.ssl.HttpsURLConnection;
+
+import edu.saxion.kuiperklaczynski.tweethack.gui.ListType;
 import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
 import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
@@ -32,69 +36,91 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
 
     @Override
     protected ArrayList<Tweet> doInBackground(String... params) {
-        String token;
-        String identifier;
-
-        if (params[0] != null) {
-            token = params[0];
-            identifier = "AuthToken "; //TODO: correct
-        } else if (params[1] != null) {
-            token = params[1];
-            identifier = "Bearer ";
-        } else {
-            return null;
-        }
-
-        String searchQuery = params[2];
+        JSONObject jSONObject = null;
+        String searchQuery;
 
         try {
-            searchQuery = URLEncoder.encode(searchQuery, "UTF-8");
+            searchQuery = URLEncoder.encode(params[3], "UTF-8");
         } catch (UnsupportedEncodingException uee) {
             Log.e(TAG, "doInBackground: ", uee );
             return null;
         }
 
-        URL url;
-        try {
-            if (params[3] != null) {
-                url = new URL("https://api.twitter.com/1.1/search/tweets.json?q=" + searchQuery + params[3]);
-                Log.d(TAG, "doInBackground: loading additional search results");
+        //if we're using accessTokens
+        if (params[0] != null) {
+
+            OAuth1AccessToken accessToken = new OAuth1AccessToken(params[0], params[1]);
+
+            String url;
+            if (params[4] != null) {
+                url = "https://api.twitter.com/1.1/search/tweets.json?q=" + searchQuery + params[4];
             } else {
-                url = new URL("https://api.twitter.com/1.1/search/tweets.json?q=" + searchQuery);
-                Log.d(TAG, "doInBackground: loading search results");
+                url = "https://api.twitter.com/1.1/search/tweets.json?q=" + searchQuery;
             }
-        } catch (MalformedURLException mue) {
-            Log.e(TAG, "doInBackground: ", mue);
+
+            OAuth10aService service = RequestTokenTask.service;
+            Response response;
+
+            OAuthRequest request = new OAuthRequest(Verb.GET, url, service);
+            service.signRequest(accessToken, request);
+            response = request.send();
+
+            if (response.getCode() != 200) {
+                Log.d(TAG, "doInBackground: code was " + response.getCode());
+                return null;
+            }
+
+            try {
+                jSONObject = new JSONObject(response.getBody());
+            } catch (Exception e) {
+                Log.e(TAG, "doInBackground: ", e);
+            }
+
+        //if we're using bearerTokens
+        } else if (params[2] != null) {
+            String token = "Bearer " + params[2];
+
+            URL url;
+            try {
+                if (params[3] != null) {
+                    url = new URL("https://api.twitter.com/1.1/search/tweets.json?q=" + searchQuery + params[3]);
+                    Log.d(TAG, "doInBackground: loading additional search results");
+                } else {
+                    url = new URL("https://api.twitter.com/1.1/search/tweets.json?q=" + searchQuery);
+                    Log.d(TAG, "doInBackground: loading search results");
+                }
+            } catch (MalformedURLException mue) {
+                Log.e(TAG, "doInBackground: ", mue);
+                return null;
+            }
+
+            try {
+                HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+
+                //TODO: add user token support
+                conn.addRequestProperty("Authorization", token);
+
+                conn.setRequestMethod("GET");
+                if (HttpsURLConnection.HTTP_OK == conn.getResponseCode()) {
+                    InputStream is = conn.getInputStream();
+                    String response = IOUtils.toString(is, "UTF-8");
+                    IOUtils.closeQuietly(is);
+
+                    jSONObject = new JSONObject(response);
+                } else {
+                    Log.d(TAG, "doInBackground: httpstatus = " + conn.getResponseCode());
+                }
+                conn.disconnect();
+            } catch (Exception e) {
+                Log.e(TAG, "doInBackground: ", e);
+                return null;
+            }
+
+        } else {
             return null;
         }
 
-
-
-        JSONObject jSONObject = null;
-
-        try {
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-            //TODO: add user token support
-            conn.addRequestProperty("Authorization", identifier + token);
-
-            conn.setRequestMethod("GET");
-            if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
-                InputStream is = conn.getInputStream();
-                String response = IOUtils.toString(is, "UTF-8");
-                IOUtils.closeQuietly(is);
-
-                jSONObject = new JSONObject(response);
-            } else {
-                Log.d(TAG, "doInBackground: httpstatus = " + conn.getResponseCode());
-            }
-            conn.disconnect();
-        } catch (Exception e) {
-            Log.e(TAG, "doInBackground: ", e);
-            return null;
-        }
-
-        ArrayList<Tweet> tweets = null;
+        ArrayList<Tweet> tweets;
 
         if (jSONObject != null) {
             try {
@@ -104,7 +130,7 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
                 return null;
             }
         } else {
-            Log.d(TAG, "doInBackground: jSONObeject was null");
+            Log.d(TAG, "doInBackground: jSONObject was null");
             return null;
         }
 
@@ -114,9 +140,9 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
             Log.d(TAG, "doInBackground: tweets is null");
         }
 
-        if (params[3] != null) {
+        if (!params[4].isEmpty()) {
             Log.d(TAG, "doInBackground: there is an additional modifier present");
-            if (params[3].contains("since_id")) {
+            if (params[4].contains("since_id")) {
                 Log.d(TAG, "doInBackground: since_id has been used");
                 tweets.add(null);
             }
@@ -127,18 +153,25 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
 
     @Override
     protected void onPostExecute(ArrayList<Tweet> tweets) {
+        if (tweets == null) return;
+
         MainActivity m = MainActivity.getInstance();
 
-        if (tweets.get(tweets.size()-1) == null) {
-            tweets.remove(tweets.size()-1);
+        if (tweets.size() != 0) {
             if (tweets.get(tweets.size()-1) == null) {
-                tweets.remove(tweets.size()-1);
-                m.topUpItems(tweets);
-            } else {
+                tweets.remove(tweets.size() - 1);
+
+                if (tweets.size() != 0) {
+                    if (tweets.get(tweets.size() - 1) == null) {
+                        tweets.remove(tweets.size() - 1);
+                        m.topUpTweetsList(tweets, ListType.SEARCH);
+                        return;
+                    }
+                }
                 m.addItems(tweets);
+                return;
             }
-        } else {
-            m.updateView(tweets);
         }
+        m.updateView(tweets);
     }
 }

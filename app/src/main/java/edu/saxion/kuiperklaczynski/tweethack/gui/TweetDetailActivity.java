@@ -1,6 +1,7 @@
 package edu.saxion.kuiperklaczynski.tweethack.gui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.scribejava.core.model.OAuth1AccessToken;
+
 import java.io.FileNotFoundException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
@@ -29,7 +32,11 @@ import java.util.Map;
 import edu.saxion.kuiperklaczynski.tweethack.R;
 import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
 import edu.saxion.kuiperklaczynski.tweethack.net.DownloadImageTask;
+import edu.saxion.kuiperklaczynski.tweethack.net.FavoriteTask;
+import edu.saxion.kuiperklaczynski.tweethack.net.RetweetTask;
 import edu.saxion.kuiperklaczynski.tweethack.net.URLTesting;
+import edu.saxion.kuiperklaczynski.tweethack.net.UnFavoriteTask;
+import edu.saxion.kuiperklaczynski.tweethack.net.UnRetweetTask;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
 import edu.saxion.kuiperklaczynski.tweethack.objects.User;
 import edu.saxion.kuiperklaczynski.tweethack.objects.tweet.entities.URL;
@@ -40,6 +47,7 @@ public class TweetDetailActivity extends AppCompatActivity {
     public static Map<String, Tweet> tweetsMap = new HashMap<>(); //id_str is key
     private static final String TAG = "TweetHax_TweetDetail"; //Log Tag
     private String fullName, username, avatarURL, body, timeAgo, id_str;
+    private long id;
     TweetListAdapter tweetListAdapter;
     public Tweet detailTweet;
 
@@ -66,6 +74,7 @@ public class TweetDetailActivity extends AppCompatActivity {
             body = detailTweet.getText();
             timeAgo = StringDateConverter.agoString(System.currentTimeMillis(), StringDateConverter.dateFromJSONString(detailTweet.getCreated_at()));
             id_str = detailTweet.getIdStr();
+            id = detailTweet.getId();
         }
         //TODO: add replies using network
         //commented out because this needs to be networking shiz
@@ -94,6 +103,8 @@ public class TweetDetailActivity extends AppCompatActivity {
         TextView timeAgoView = (TextView) findViewById(R.id.tweetDetailTimeAgo);
         TextView bodyView = (TextView) findViewById(R.id.tweetDetailBodyView);
         ImageView avatarView = (ImageView) findViewById(R.id.tweetDetailAvatarView);
+        final ImageView retweetView = (ImageView) findViewById(R.id.tweetDetailRetweet);
+        final ImageView favoriteView = (ImageView) findViewById(R.id.tweetDetailFavorite);
         final EditText replyField = (EditText) findViewById(R.id.tweetDetailReplyField);
 
         View.OnClickListener listener = new View.OnClickListener() {
@@ -127,6 +138,34 @@ public class TweetDetailActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        retweetView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OAuth1AccessToken accessToken = getAccessToken();
+                if(retweetView.getAlpha() < 0.7) {
+                    new RetweetTask(retweetView, detailTweet.getId(), accessToken).execute();
+                    Toast.makeText(getApplicationContext(), "Retweeting...", Toast.LENGTH_SHORT);
+                } else {
+                    new UnRetweetTask(retweetView, detailTweet.getId(), accessToken).execute();
+                    Toast.makeText(getApplicationContext(), "Reverting retweet...", Toast.LENGTH_SHORT);
+                }
+            }
+        });
+
+        favoriteView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OAuth1AccessToken accessToken = getAccessToken();
+                if(favoriteView.getAlpha() < 0.7) {
+                    new FavoriteTask(favoriteView, detailTweet.getId(), accessToken).execute();
+                    Toast.makeText(getApplicationContext(), "Favoriting...", Toast.LENGTH_SHORT);
+                } else {
+                    new UnFavoriteTask(favoriteView, detailTweet.getId(), accessToken).execute();
+                    Toast.makeText(getApplicationContext(), "Reverting favorite...", Toast.LENGTH_SHORT);
+                }
+            }
+        });
     }
 
     private void sendTweet(String text, View view) {
@@ -154,5 +193,13 @@ public class TweetDetailActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    public OAuth1AccessToken getAccessToken() {
+        SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
+        String accessTokenStr = prefs.getString("access_token", "");
+        String accessTokenSecretStr = prefs.getString("access_token_secret", "");
+        OAuth1AccessToken accessToken = new OAuth1AccessToken(accessTokenStr, accessTokenSecretStr);
+        return accessToken;
     }
 }

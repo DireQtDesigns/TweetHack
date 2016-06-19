@@ -90,6 +90,29 @@
                 android:textSize="20dp" />
 
             <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="5dp">
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tweetDetailRetweet"
+                    android:src="@drawable/ic_retweet"
+                    android:layout_weight="1"
+                    android:alpha="0.5" />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tweetDetailFavorite"
+                    android:src="@drawable/ic_star_blue"
+                    android:layout_weight="1"
+                    android:alpha="0.5" />
+            </LinearLayout>
+
+            <LinearLayout
                 style="ba"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

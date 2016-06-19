@@ -96,6 +96,18 @@ public class TweetDetailActivity extends AppCompatActivity {
         ImageView avatarView = (ImageView) findViewById(R.id.tweetDetailAvatarView);
         final EditText replyField = (EditText) findViewById(R.id.tweetDetailReplyField);
 
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent profileIntent = new Intent(MainActivity.getInstance(),UserActivity.class);
+                profileIntent.putExtra("TweetID", detailTweet.getUser().getId());
+                startActivity(profileIntent);
+            }
+        };
+
+        nameView.setOnClickListener(listener);
+        usernameView.setOnClickListener(listener);
+        avatarView.setOnClickListener(listener);
 
         nameView.setText(fullName);
         usernameView.setText("@" + username);

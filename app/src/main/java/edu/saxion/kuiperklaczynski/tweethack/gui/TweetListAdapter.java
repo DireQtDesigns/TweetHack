@@ -1,6 +1,7 @@
 package edu.saxion.kuiperklaczynski.tweethack.gui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -45,12 +46,12 @@ public class TweetListAdapter extends ArrayAdapter<Tweet> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         if(convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.tweet_list_item, parent, false);
         }
-        Tweet tweet = tweets.get(position);
+        final Tweet tweet = tweets.get(position);
         TextView nameView = (TextView) convertView.findViewById(R.id.nameView);
         TextView timeView = (TextView) convertView.findViewById(R.id.timeView);
         TextView bodyView = (TextView) convertView.findViewById(R.id.bodyView);
@@ -68,6 +69,15 @@ public class TweetListAdapter extends ArrayAdapter<Tweet> {
         //Image fetching from URL
         String imgURL = tweet.getUser().getProfile_image_url();
         new DownloadImageTask(avatarView).execute(imgURL);
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.getInstance(), TweetDetailActivity.class);
+                intent.putExtra("TweetID", tweets.get(position).getIdStr());
+                MainActivity.getInstance().startActivity(intent);
+            }
+        });
 
         return convertView;
     }

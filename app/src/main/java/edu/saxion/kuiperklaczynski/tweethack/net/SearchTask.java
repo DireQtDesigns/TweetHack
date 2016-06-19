@@ -2,6 +2,7 @@ package edu.saxion.kuiperklaczynski.tweethack.net;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import com.github.scribejava.core.model.OAuthRequest;
@@ -139,7 +140,7 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
             Log.d(TAG, "doInBackground: tweets is null");
         }
 
-        if (params[4] != null) {
+        if (!params[4].isEmpty()) {
             Log.d(TAG, "doInBackground: there is an additional modifier present");
             if (params[4].contains("since_id")) {
                 Log.d(TAG, "doInBackground: since_id has been used");

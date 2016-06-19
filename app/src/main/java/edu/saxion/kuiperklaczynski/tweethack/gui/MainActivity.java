@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 //makes sure you can't spam updates so twitter doesn't time your ass out
-                if (time + 5 > System.currentTimeMillis() / 1000) {
+                if (time + 15 > System.currentTimeMillis() / 1000) {
                     return;
                 } else {
                     time = System.currentTimeMillis() / 1000;
@@ -140,14 +140,14 @@ public class MainActivity extends AppCompatActivity {
                             if (!flag_loading) {
                                 flag_loading = true;
                                 long sinceID = tweetsList.get(0).getId();
-                                new SearchTask().execute(new String[]{accessToken, accessTokenSecret, bearerToken, seachField, "&since_id=" + sinceID});
+                                searchTask("&since_id=" + sinceID, null);
                             }
                         } else if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
                             Log.d(TAG, "onScroll: scrolling down in Search");
                             if (!flag_loading) {
                                 flag_loading = true;
                                 long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
-                                new SearchTask().execute(new String[]{accessToken, accessTokenSecret, bearerToken, seachField, "&max_id=" + nextid});
+                                searchTask(null, "&max_id=" + nextid);
                             }
                         }
                         break;
@@ -158,14 +158,14 @@ public class MainActivity extends AppCompatActivity {
                             if (flag_loading == false) {
                                 flag_loading = true;
                                 long sinceID = tweetsList.get(0).getId();
-                                new TimeLineTask().execute(new String[]{accessToken, accessTokenSecret, "?since_id=" + sinceID});
+                                timeLineTask("?since_id=" + sinceID, null);
                             }
                         } else if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
                             Log.d(TAG, "onScroll: scrolling down in Home");
                             if (flag_loading == false) {
                                 flag_loading = true;
                                 long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
-                                new TimeLineTask().execute(new String[]{accessToken, accessTokenSecret, "?max_id=" + nextid});
+                                timeLineTask(null, "?max_id=" + nextid);
                             }
                         }
                         break;
@@ -203,8 +203,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_home:
                 type = ListType.HOME;
                 ((Toolbar) findViewById(R.id.toolbar)).setTitle("Home");
+                tweetsList.clear();
 
-                new TimeLineTask().execute(accessToken, accessTokenSecret, null);
+                timeLineTask(null, null);
 
                 break;
 
@@ -222,13 +223,14 @@ public class MainActivity extends AppCompatActivity {
                 alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         type = ListType.SEARCH;
+                        tweetsList.clear();
 
                         seachField = input.getText().toString();
                         ((Toolbar) findViewById(R.id.toolbar)).setTitle("Search Results: " + seachField);
 
                         listView.setClickable(true);
+                        searchTask(null, null);
 
-                        new SearchTask().execute(new String[]{accessToken, accessTokenSecret, bearerToken, seachField, null});
                     }
                 });
 
@@ -242,10 +244,12 @@ public class MainActivity extends AppCompatActivity {
                 alert.show();
                 break;
             case R.id.action_authtest:
+                tweetsList.clear();
                 Intent authIntent = new Intent(MainActivity.this, AuthActivity.class);
                 startActivity(authIntent);
                 break;
             case R.id.action_logout:
+                tweetsList.clear();
                 SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
                 prefs.edit().remove("access_token").apply();
                 prefs.edit().remove("access_token_secret").apply();
@@ -289,9 +293,12 @@ public class MainActivity extends AppCompatActivity {
     public void topUpTweetsList(ArrayList<Tweet> list, ListType type) {
         if (list.size() == 0) {
             if (tempTweets.size() != 0) {
+                Log.d(TAG, "topUpTweetsList: list is empty but temptweets is not");
                 int currentPosition = listView.getLastVisiblePosition() + tempTweets.size();
 
                 topUpHelper(currentPosition);
+            } else {
+                Log.d(TAG, "topUpTweetsList: list was empty, temptweets was empty");
             }
         } else {
             if (tweetsList.contains(list.get(list.size() - 1))) {
@@ -310,13 +317,37 @@ public class MainActivity extends AppCompatActivity {
                 long maxID = tempTweets.get(tempTweets.size() - 1).getId() - 1;
 
                 if (type == ListType.HOME) {
-                    new TimeLineTask().execute(new String[]{accessToken, accessTokenSecret, "?since_id=" + sinceID + "&max_id=" + maxID});
+                    timeLineTask("?since_id=" + sinceID, "&max_id=" + maxID);
                 } else if (type == ListType.SEARCH) {
-                    new SearchTask().execute(new String[]{accessToken, accessTokenSecret, bearerToken, seachField, "?since_id=" + sinceID + "&max_id=" + maxID});
+                    searchTask("&since_id="+sinceID, "&max_id="+maxID);
                 }
             }
         }
         flag_loading = false;
+    }
+
+    private void searchTask(String sinceID, String maxID) {
+        if (sinceID == null) {
+            sinceID = "";
+        }
+
+        if (maxID == null) {
+            maxID = "";
+        }
+
+        new SearchTask().execute(new String[]{accessToken, accessTokenSecret, bearerToken, seachField, sinceID + maxID});
+    }
+
+    private void timeLineTask(String sinceID, String maxID) {
+        if (sinceID == null) {
+            sinceID = "";
+        }
+
+        if (maxID == null) {
+            maxID = "";
+        }
+
+        new TimeLineTask().execute(new String[]{accessToken, accessTokenSecret, sinceID + maxID});
     }
 
     private void topUpHelper(int viewPosition) {

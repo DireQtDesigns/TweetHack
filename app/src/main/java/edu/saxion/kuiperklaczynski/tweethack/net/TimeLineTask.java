@@ -1,7 +1,9 @@
 package edu.saxion.kuiperklaczynski.tweethack.net;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import com.github.scribejava.core.model.OAuthRequest;
@@ -88,7 +90,7 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
             Log.d(TAG, "doInBackground: tweets is null");
         }
 
-        if (params[2] != null) {
+        if (!params[2].isEmpty()) {
             Log.d(TAG, "doInBackground: there is an additional modifier present");
             if (params[2].contains("since_id")) {
                 Log.d(TAG, "doInBackground: since_id has been used");
@@ -102,10 +104,12 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
 
     @Override
     protected void onPostExecute(ArrayList<Tweet> tweets) {
+        if (tweets == null) return;
+
         MainActivity m = MainActivity.getInstance();
 
         if (tweets.size() != 0) {
-            if (tweets.get(tweets.size() - 1) == null) {
+            if (tweets.get(tweets.size()-1) == null) {
                 tweets.remove(tweets.size() - 1);
 
                 if (tweets.size() != 0) {

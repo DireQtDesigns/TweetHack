@@ -108,21 +108,6 @@ public class TweetDetailActivity extends AppCompatActivity {
         replyField.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                /*char[] messageChar = replyField.getText().toString().toCharArray();
-                if(messageChar.length > 139) {
-                    Toast.makeText(getApplicationContext(), "Message too long! Size is limited to 140 Characters.", Toast.LENGTH_LONG).show();
-                    List<Character> chars = new ArrayList<Character>();
-                    String finalString;
-                    StringBuilder builder = new StringBuilder();
-                    for(int i = 0; i < messageChar.length; i++) {
-                        if(chars.size() < 140) chars.add(messageChar[i]);
-                    }
-                    for(Character c : chars) {
-                        builder.append(c);
-                    }
-                    finalString = builder.toString();
-                    replyField.setText(finalString);
-                }*/
                 if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_DOWN) {
                     sendTweet(replyField.getText().toString(), replyField);
                     replyField.setText("@" + username + " ");
@@ -133,9 +118,10 @@ public class TweetDetailActivity extends AppCompatActivity {
     }
 
     private void sendTweet(String text, View view) {
-        Snackbar.make(view, "Tweet sent to: " + username, Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
-        //TODO Implement sending a tweet
+        Intent intent = new Intent(this, NewTweetActivity.class);
+        intent.putExtra("body", text);
+        intent.putExtra("replyTo", detailTweet.getIn_reply_to_status_id());
+        startActivity(intent);
     }
 
     @Override

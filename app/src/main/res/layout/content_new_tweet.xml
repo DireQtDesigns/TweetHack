@@ -22,7 +22,8 @@
         android:background="@drawable/new_tweet_frame_layout"
         android:layout_marginBottom="10dp"
         android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus leo risus, sollicitudin in lectus non, fringilla tincidunt augue posuere."
-        android:padding="7dp" />
+        android:padding="7dp"
+        android:gravity="top|left" />
 
     <LinearLayout
         android:orientation="horizontal"

@@ -43,12 +43,12 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
         String url;
 
             if (params[2] != null) {
-                url = ("https://api.twitter.com/1.1/statuses/home_timeline.json?count=2" + params[2]);
+                url = ("https://api.twitter.com/1.1/statuses/home_timeline.json" + params[2]);
             } else {
-                url = ("https://api.twitter.com/1.1/statuses/home_timeline.json?count=2");
+                url = ("https://api.twitter.com/1.1/statuses/home_timeline.json");
             }
 
-        JSONArray jsonArray = null;
+        JSONArray jsonArray;
 
         OAuth10aService service = RequestTokenTask.service;
         Response response;
@@ -59,22 +59,17 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
 
         Log.d(TAG, "doInBackground: response code: " + response.getCode());
 
-        String s = null;
         try {
-            s = response.getBody();
-
-            jsonArray = new JSONArray(s);
+            jsonArray = new JSONArray(response.getBody());
         } catch (Exception e) {
-
-            //Log.d(TAG, "doInBackground: " + s);
             throw new RuntimeException(e);
         }
 
         ArrayList<Tweet> tweets;
 
-        if (jSONObject != null) {
+        if (jsonArray != null) {
             try {
-                tweets = JSONLoading.readJSON(jSONObject.toString());
+                tweets = JSONLoading.readJSONArray(jsonArray);
             } catch (Exception e) {
                 Log.e(TAG, "doInBackground: ", e);
                 return null;

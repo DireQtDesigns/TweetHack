@@ -158,14 +158,14 @@ public class MainActivity extends AppCompatActivity {
                             if (flag_loading == false) {
                                 flag_loading = true;
                                 long sinceID = tweetsList.get(0).getId();
-                                new TimeLineTask().execute(new String[]{accessToken, accessTokenSecret, "&since_id=" + sinceID});
+                                new TimeLineTask().execute(new String[]{accessToken, accessTokenSecret, "?since_id=" + sinceID});
                             }
                         } else if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
                             Log.d(TAG, "onScroll: scrolling down in Home");
                             if (flag_loading == false) {
                                 flag_loading = true;
                                 long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
-                                new TimeLineTask().execute(new String[]{accessToken, accessTokenSecret, "&max_id=" + nextid});
+                                new TimeLineTask().execute(new String[]{accessToken, accessTokenSecret, "?max_id=" + nextid});
                             }
                         }
                         break;
@@ -211,6 +211,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_search:
                 type = ListType.SEARCH;
 
+                listView.setClickable(false);
+
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
                 alert.setTitle("Search");
@@ -224,12 +226,15 @@ public class MainActivity extends AppCompatActivity {
                         seachField = input.getText().toString();
                         ((Toolbar) findViewById(R.id.toolbar)).setTitle("Search Results: " + seachField);
 
+                        listView.setClickable(true);
+
                         new SearchTask().execute(new String[]{accessToken, accessTokenSecret, bearerToken, seachField, null});
                     }
                 });
 
                 alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
+                        listView.setClickable(true);
                         // Canceled.
                     }
                 });
@@ -305,9 +310,9 @@ public class MainActivity extends AppCompatActivity {
                 long maxID = tempTweets.get(tempTweets.size() - 1).getId() - 1;
 
                 if (type == ListType.HOME) {
-                    new TimeLineTask().execute(new String[]{accessToken, accessTokenSecret, "&since_id=" + sinceID + "&max_id=" + maxID});
+                    new TimeLineTask().execute(new String[]{accessToken, accessTokenSecret, "?since_id=" + sinceID + "&max_id=" + maxID});
                 } else if (type == ListType.SEARCH) {
-                    new SearchTask().execute(new String[]{accessToken, accessTokenSecret, bearerToken, seachField, "&since_id=" + sinceID + "&max_id=" + maxID});
+                    new SearchTask().execute(new String[]{accessToken, accessTokenSecret, bearerToken, seachField, "?since_id=" + sinceID + "&max_id=" + maxID});
                 }
             }
         }

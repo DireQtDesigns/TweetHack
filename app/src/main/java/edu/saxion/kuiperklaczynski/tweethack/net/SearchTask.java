@@ -151,16 +151,21 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
 
         MainActivity m = MainActivity.getInstance();
 
-        if (tweets.get(tweets.size()-1) == null) {
-            tweets.remove(tweets.size()-1);
+        if (tweets.size() != 0) {
             if (tweets.get(tweets.size()-1) == null) {
-                tweets.remove(tweets.size()-1);
-                m.topUpTweetsList(tweets, ListType.SEARCH);
-            } else {
+                tweets.remove(tweets.size() - 1);
+
+                if (tweets.size() != 0) {
+                    if (tweets.get(tweets.size() - 1) == null) {
+                        tweets.remove(tweets.size() - 1);
+                        m.topUpTweetsList(tweets, ListType.SEARCH);
+                        return;
+                    }
+                }
                 m.addItems(tweets);
+                return;
             }
-        } else {
-            m.updateView(tweets);
         }
+        m.updateView(tweets);
     }
 }

@@ -45,16 +45,7 @@ public class JSONLoading {
         }
     }
 
-    /**
-     * Fetches data from jsonCode using readAssetIntoString, into json data, then into object structures. nullnullnullnullnullnullnullnullnullnullnullnull, oh wait...
-     * @author Leon
-     * @throws JSONException If object or data cannot be found etc.
-     * @throws IOException If file cannot be found.
-     */
-    public static ArrayList<Tweet> readJSON(String jsonCode) throws JSONException, IOException {
-        if(Settings.DEBUG == Settings.IO || Settings.DEBUG == Settings.ALL) Log.d("JSONLoader", jsonCode);
-        JSONObject jason = new JSONObject(jsonCode);
-        JSONArray statuses = jason.getJSONArray("statuses");
+    public static ArrayList<Tweet> readJSONArray(JSONArray statuses) throws JSONException, IOException {
 
         ArrayList<Tweet> tempTweets = new ArrayList<>();
 
@@ -116,6 +107,21 @@ public class JSONLoading {
 
 
         return tempTweets;
+    }
+
+    /**
+     * Fetches data from jsonCode using readAssetIntoString, into json data, then into object structures. nullnullnullnullnullnullnullnullnullnullnullnull, oh wait...
+     * @author Leon
+     * @throws JSONException If object or data cannot be found etc.
+     * @throws IOException If file cannot be found.
+     */
+    public static ArrayList<Tweet> readJSON(String jsonCode) throws JSONException, IOException {
+        if(Settings.DEBUG == Settings.IO || Settings.DEBUG == Settings.ALL) Log.d("JSONLoader", jsonCode);
+        JSONObject jason = new JSONObject(jsonCode);
+        JSONArray statuses = jason.getJSONArray("statuses");
+
+        return readJSONArray(statuses);
+
     }
 
     public static ArrayList<Tweet> repliesTo(ArrayList<Tweet> from, Tweet to) {

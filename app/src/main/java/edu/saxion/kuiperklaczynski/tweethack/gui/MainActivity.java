@@ -233,6 +233,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem itemLogin = menu.findItem(R.id.action_authtest);
+        SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
+        if(prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret"))
+            itemLogin.setTitle("Logged in");
+        else
+            itemLogin.setTitle("Log in");
         return true;
     }
 
@@ -242,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
         switch (id) {
             case R.id.action_home:
                 type = ListType.HOME;
@@ -300,14 +306,17 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.action_authtest:
-                tweetsList.clear();
-                Intent authIntent = new Intent(MainActivity.this, AuthActivity.class);
-                startActivity(authIntent);
+                if (prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
+                    Toast.makeText(getApplicationContext(), "Already logged in!", Toast.LENGTH_LONG).show();
+                } else {
+                    tweetsList.clear();
+                    Intent authIntent = new Intent(MainActivity.this, AuthActivity.class);
+                    startActivity(authIntent);
+                }
                 break;
 
             case R.id.action_logout:
                 tweetsList.clear();
-                SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
                 prefs.edit().remove("access_token").apply();
                 prefs.edit().remove("access_token_secret").apply();
                 if (prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
@@ -317,10 +326,6 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(reAuthIntent);
                 }
                 break;
-        }
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
         }
 
         return super.onOptionsItemSelected(item);

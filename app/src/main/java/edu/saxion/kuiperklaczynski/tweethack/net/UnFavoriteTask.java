@@ -38,7 +38,7 @@ public class UnFavoriteTask extends AsyncTask<Context,Void,String>{
 
     @Override
     protected void onPostExecute(String s) {
-        favoriteView.setAlpha((float) 1);
+        favoriteView.setAlpha((float) 0.5);
     }
 
     @Override

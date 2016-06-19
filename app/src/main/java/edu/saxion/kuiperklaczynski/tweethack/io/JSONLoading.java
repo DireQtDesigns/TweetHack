@@ -61,7 +61,7 @@ public class JSONLoading {
 
         for (int i = 0; i < statuses.length(); i++) {
             JSONObject jsonStatus = statuses.getJSONObject(i);
-            Tweet status = new Tweet(null, null, 0, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+            Tweet status = new Tweet(null, null, 0, null, null, null, null, null, null, null, null, null, null, 0, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
             User user = new User(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                     null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
 

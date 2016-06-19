@@ -121,6 +121,7 @@ public class TweetDetailActivity extends AppCompatActivity {
         Intent intent = new Intent(this, NewTweetActivity.class);
         intent.putExtra("body", text);
         intent.putExtra("replyTo", detailTweet.getId());
+        Log.d(TAG, "sendTweet: fetched id: "+detailTweet.getId());
         startActivity(intent);
     }
 

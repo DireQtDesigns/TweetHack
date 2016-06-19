@@ -70,7 +70,7 @@ public class NewTweetActivity extends AppCompatActivity {
                 Tweet tweet = new Tweet();
                 tweet.setText(bodyEditText.getText().toString());
                 if(getIntent().hasExtra("replyTo")) {
-                    tweet.setIn_reply_to_status_id(BigInteger.valueOf(getIntent().getIntExtra("replyTo", 0)));
+                    tweet.setIn_reply_to_status_id(getIntent().getLongExtra("replyTo", 0));
                     Log.d(TAG, "onClick: Has extra 'replyTo: ' "+getIntent().getIntExtra("replyTo", 0));
                 }
                 new SendTweetTask(tweet, getApplicationContext(), accessToken).execute();

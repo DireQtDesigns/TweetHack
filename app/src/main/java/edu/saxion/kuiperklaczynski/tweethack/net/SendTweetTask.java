@@ -56,9 +56,10 @@ public class SendTweetTask extends AsyncTask<Context,Void,String>{
             String url = "https://api.twitter.com/1.1/statuses/update.json";
             url += "?status=";
             url+= URLEncoder.encode(tweet.getText(), "UTF-8");
-            if(tweet.getIn_reply_to_status_id() != null) {
+            if(tweet.getIn_reply_to_status_id() != 0) {
                 url += "&in_reply_to_status_id";
                 url += tweet.getIn_reply_to_status_id();
+                Log.d(TAG, "doInBackground: Adding replyId to Url: "+tweet.getIn_reply_to_status_id());
             }
             final OAuthRequest request = new OAuthRequest(Verb.POST, url, service);
             service.signRequest(accessToken, request);

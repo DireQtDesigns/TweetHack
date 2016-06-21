@@ -14,24 +14,13 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.github.scribejava.apis.TwitterApi;
-import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.oauth.OAuth10aService;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.saxion.kuiperklaczynski.tweethack.R;
-import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
 import edu.saxion.kuiperklaczynski.tweethack.net.BearerToken;
 import edu.saxion.kuiperklaczynski.tweethack.net.SearchTask;
 import edu.saxion.kuiperklaczynski.tweethack.net.TimeLineTask;
@@ -103,6 +92,10 @@ public class MainActivity extends AppCompatActivity {
     private String seachField = null;
     private boolean flag_loading = false;
 
+    /**
+     * onCreate, sets up the entire activity. logs in, and sets scrollListeners so you have the latest data when you swipe up/down
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         instance = this;
@@ -267,7 +260,9 @@ public class MainActivity extends AppCompatActivity {
             }
     }
 
-
+    /**
+     * checks whether the user is still logged in. if no, starts the login activity. if yes, continues as usual
+     */
     @Override
     protected void onResume() {
         SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
@@ -292,6 +287,16 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * sets actions for the options menu like:
+     * Home: gets you the home feed
+     * Search: asks for input, then searches based on that input
+     * Profile: opens a profile activity where you can see your own profile\
+     * Login: lets you login
+     * Logout: lets you logout
+     * @param item which item has been clicked
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -388,12 +393,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * helper method for when you switch from Home to Search
+     * @param list contains the new tweets
+     */
     public void updateView(ArrayList<Tweet> list) {
         tweetsList = list;
 
         setListView();
     }
 
+    /**
+     * helper method for when you scroll down and load more items
+     * @param list contains the older tweets, to be added
+     */
     public void addItems(ArrayList<Tweet> list) {
         tweetsList.addAll(list);
         ((TweetListAdapter) listView.getAdapter()).notifyDataSetChanged();
@@ -405,6 +418,11 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Tweet> tempTweets = new ArrayList<>();
 
+    /**
+     * method for refreshing your feed, can be called multiple times by a single load depending on how much new data is coming in
+     * @param list list of new tweets
+     * @param type type of the current search, needed to know if you should call SearchTask of TimeLineTask
+     */
     public void topUpTweetsList(ArrayList<Tweet> list, ListType type) {
         if (list.size() == 0) {
             if (tempTweets.size() != 0) {
@@ -444,6 +462,11 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setRefreshing(false);
     }
 
+    /**
+     * helper method to easily call SearchTask
+     * @param sinceID
+     * @param maxID
+     */
     private void searchTask(String sinceID, String maxID) {
         if (sinceID == null) {
             sinceID = "";
@@ -456,6 +479,11 @@ public class MainActivity extends AppCompatActivity {
         new SearchTask().execute(new String[]{accessToken, accessTokenSecret, bearerToken, seachField, sinceID + maxID});
     }
 
+    /**
+     * helper method to easily call TimeLineTask
+     * @param sinceID
+     * @param maxID
+     */
     private void timeLineTask(String sinceID, String maxID) {
         if (sinceID == null) {
             sinceID = "";
@@ -468,6 +496,10 @@ public class MainActivity extends AppCompatActivity {
         new TimeLineTask().execute(new String[]{accessToken, accessTokenSecret, sinceID + maxID});
     }
 
+    /**
+     * helper method to, when all new tweets have been loaded, add them to the current tweetlist and update views
+     * @param viewPosition
+     */
     private void topUpHelper(int viewPosition) {
         for (int i = tempTweets.size() - 1; i >= 0; i--) {
             if (tweetsList.contains(tempTweets.get(i))) {

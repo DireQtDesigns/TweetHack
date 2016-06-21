@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -158,65 +159,97 @@ public class MainActivity extends AppCompatActivity {
 
         setListView();
 
-        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            private long time = 0;
+//        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+//            private long time = 0;
+//
+//            @Override
+//            public void onScrollStateChanged(AbsListView view, int scrollState) {
+//
+//            }
+//
+//            @Override
+//            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+//                //makes sure you can't spam updates so twitter doesn't time your ass out
+//                if (time + 15 > System.currentTimeMillis() / 1000) {
+//                    return;
+//                } else {
+//                    time = System.currentTimeMillis() / 1000;
+//                }
+//
+//                Log.d(TAG, "onScroll: scrolling using " + type);
+//
+//                if (firstVisibleItem < 5 && totalItemCount != 0) {
+//                    onScrollUp();
+//                } else if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
+//                    onScrollDown();
+//                }
+//            }
+//        });
 
+        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                //makes sure you can't spam updates so twitter doesn't time your ass out
-                if (time + 15 > System.currentTimeMillis() / 1000) {
-                    return;
-                } else {
-                    time = System.currentTimeMillis() / 1000;
-                }
-
-                Log.d(TAG, "onScroll: scrolling using " + type);
-
-                switch (type) {
-                    case SEARCH:
-                        if (firstVisibleItem < 5 && totalItemCount != 0) {
-                            Log.d(TAG, "onScroll: scrolling up in Search");
-                            if (!flag_loading) {
-                                flag_loading = true;
-                                long sinceID = tweetsList.get(0).getId();
-                                searchTask("&since_id=" + sinceID, null);
-                            }
-                        } else if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
-                            Log.d(TAG, "onScroll: scrolling down in Search");
-                            if (!flag_loading) {
-                                flag_loading = true;
-                                long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
-                                searchTask(null, "&max_id=" + nextid);
-                            }
-                        }
-                        break;
-
-                    case HOME:
-                        if (firstVisibleItem < 2 && totalItemCount != 0) {
-                            Log.d(TAG, "onScroll: scrolling up in Home");
-                            if (flag_loading == false) {
-                                flag_loading = true;
-                                long sinceID = tweetsList.get(0).getId();
-                                timeLineTask("?since_id=" + sinceID, null);
-                            }
-                        } else if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
-                            Log.d(TAG, "onScroll: scrolling down in Home");
-                            if (flag_loading == false) {
-                                flag_loading = true;
-                                long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
-                                timeLineTask(null, "?max_id=" + nextid);
-                            }
-                        }
-                        break;
+            public void onRefresh() {
+                if (listView.getFirstVisiblePosition() == 0) {
+                    onScrollUp();
+                } else if (listView.getLastVisiblePosition() == listView.getAdapter().getCount()) {
+                    onScrollDown();
                 }
             }
         });
     }
+
+    /**
+     * called when the user scrolls up far enough to refresh for new tweets
+     */
+    private void onScrollUp() {
+        Log.d(TAG, "onScroll: scrolling up in " + type);
+
+        switch (type) {
+            case SEARCH:
+                if (!flag_loading) {
+                    flag_loading = true;
+                    long sinceID = tweetsList.get(0).getId();
+                    searchTask("&since_id=" + sinceID, null);
+                }
+                break;
+
+            case HOME:
+                if (flag_loading == false) {
+                    flag_loading = true;
+                    long sinceID = tweetsList.get(0).getId();
+                    timeLineTask("?since_id=" + sinceID, null);
+                }
+                break;
+        }
+    }
+
+    /**
+     * called when the user scrolls down far enough to load new tweets
+     */
+    private void onScrollDown() {
+        Log.d(TAG, "onScroll: scrolling down in " + type);
+
+        switch (type) {
+            case SEARCH:
+                if (!flag_loading) {
+                    flag_loading = true;
+                    long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
+                    searchTask(null, "&max_id=" + nextid);
+                }
+                break;
+
+            case HOME:
+                if (flag_loading == false) {
+                    flag_loading = true;
+                    long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
+                    timeLineTask(null, "?max_id=" + nextid);
+                }
+                break;
+            }
+    }
+
 
     @Override
     protected void onResume() {

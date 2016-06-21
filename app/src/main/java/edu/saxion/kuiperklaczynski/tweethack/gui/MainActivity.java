@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "TweetHax_MainActivity"; //Log Tag
     private static ListView listView;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private ListType type;
     private String seachField = null;
@@ -159,45 +160,59 @@ public class MainActivity extends AppCompatActivity {
 
         setListView();
 
-//        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-//            private long time = 0;
-//
-//            @Override
-//            public void onScrollStateChanged(AbsListView view, int scrollState) {
-//
-//            }
-//
-//            @Override
-//            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-//                //makes sure you can't spam updates so twitter doesn't time your ass out
-//                if (time + 15 > System.currentTimeMillis() / 1000) {
-//                    return;
-//                } else {
-//                    time = System.currentTimeMillis() / 1000;
-//                }
-//
-//                Log.d(TAG, "onScroll: scrolling using " + type);
-//
-//                if (firstVisibleItem < 5 && totalItemCount != 0) {
-//                    onScrollUp();
-//                } else if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
-//                    onScrollDown();
-//                }
-//            }
-//        });
-
-        SwipeRefreshLayout swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
-            public void onRefresh() {
-                if (listView.getFirstVisiblePosition() == 0) {
-                    onScrollUp();
-                } else if (listView.getLastVisiblePosition() == listView.getAdapter().getCount()) {
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (!canRefresh()) {
+                    return;
+                }
+
+                Log.d(TAG, "onScroll: scrolling using " + type);
+
+                if (firstVisibleItem + visibleItemCount >= totalItemCount - 5 && totalItemCount != 0) {
                     onScrollDown();
                 }
             }
         });
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                if (!canRefresh()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                    return;
+                }
+
+                Log.d(TAG, "onRefresh: refreshing");
+
+                if (listView.getFirstVisiblePosition() == 0) {
+                    onScrollUp();
+                }
+            }
+        });
+    }
+
+    private long time = 0;
+
+    /**
+     * prevents the user from spamming updates, and getting timed out by twitter
+     * @return true if enough time has passed since the last update
+     */
+    private boolean canRefresh() {
+        if (time + 15 > System.currentTimeMillis() / 1000) {
+            return false;
+        } else {
+            time = System.currentTimeMillis() / 1000;
+            return true;
+        }
     }
 
     /**
@@ -229,6 +244,8 @@ public class MainActivity extends AppCompatActivity {
      * called when the user scrolls down far enough to load new tweets
      */
     private void onScrollDown() {
+        Toast.makeText(this, "getting more tweets for you, hang on..", Toast.LENGTH_SHORT).show();
+
         Log.d(TAG, "onScroll: scrolling down in " + type);
 
         switch (type) {
@@ -424,6 +441,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         flag_loading = false;
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     private void searchTask(String sinceID, String maxID) {

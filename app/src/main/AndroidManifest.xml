@@ -44,7 +44,7 @@
             android:name=".gui.NewTweetActivity"
             android:label="@string/title_activity_new_tweet"
             android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".gui.MainActivity"></activity>
+            android:parentActivityName=".gui.MainActivity"/>
     </application>
 
 </manifest>

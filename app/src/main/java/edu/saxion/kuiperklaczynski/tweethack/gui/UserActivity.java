@@ -1,6 +1,7 @@
 package edu.saxion.kuiperklaczynski.tweethack.gui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -12,11 +13,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.github.scribejava.core.model.OAuth1AccessToken;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.saxion.kuiperklaczynski.tweethack.R;
 import edu.saxion.kuiperklaczynski.tweethack.net.DownloadImageTask;
+import edu.saxion.kuiperklaczynski.tweethack.net.UserBannerTask;
 import edu.saxion.kuiperklaczynski.tweethack.net.UserTweetsTask;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
 import edu.saxion.kuiperklaczynski.tweethack.objects.User;
@@ -98,7 +102,9 @@ public class UserActivity extends AppCompatActivity {
         nameView.setText(fullName);
         usernameView.setText("@" + username);
         new DownloadImageTask(avatarView).execute(avatarURL);
-        new DownloadImageTask(bannerView).execute(bannerURL);
+        SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
+        OAuth1AccessToken accessToken = new OAuth1AccessToken(prefs.getString("access_token", "0"),prefs.getString("access_token_secret", "0"));
+        new UserBannerTask(bannerView, username, accessToken).execute();
 
         tweetsListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             long time = 0;

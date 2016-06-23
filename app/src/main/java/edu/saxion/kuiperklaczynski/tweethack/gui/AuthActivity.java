@@ -20,7 +20,12 @@ import edu.saxion.kuiperklaczynski.tweethack.net.RequestTokenTask;
 
 public class AuthActivity extends AppCompatActivity {
 
-    //TODO: javadoc
+    /**
+     * Lets the user log in to the Application; Launches a new RequestTokenTask, which will eventually return a URL including the request tokens. Thus URL will load.
+     * After the user logs in, the WebView will redirect to the callback url including the 'verifier'.
+     * When the above if finished, a RequestTokenTraderTask will trade in the above request tokens and the verifier into the Access token and -secret.
+     * This will be saved to the SharedPreferences, the user can choose to log out via the Logout button on the ActionBar.
+     */
 
     private static final String API_KEY = "4LiUJZIHjuFT6IVaGBCZooSRw", API_SECRET = "yrxAVjSOd7oyqOKCSwpAVKCsktOlw0rR8ZwjGUOQNnyxiz13QL";
     private static final String TAG = "AuthActivity";

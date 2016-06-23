@@ -30,7 +30,12 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
 
 public class NewTweetActivity extends AppCompatActivity {
 
-    //TODO: javadoc
+    /**
+     * Lets the user post a new tweet, hasn't really got anything more than an editText as well as a Button.
+     * User also gets redirected to this activity when posting a reply, the body of the reply field will get copied over to tis editText, including the screen-name of the user to reply to.
+     *
+     * Eventually calls a new SendTweetTask with the Access tokens and obviously the tweet object including the body text.
+     */
 
     private static final String TAG = "NewTweetAct";
 

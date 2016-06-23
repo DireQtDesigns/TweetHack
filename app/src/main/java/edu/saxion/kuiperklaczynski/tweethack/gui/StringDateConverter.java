@@ -73,7 +73,6 @@ public class StringDateConverter {
         SimpleDateFormat format = new SimpleDateFormat(LARGE_TWITTER_DATE_FORMAT);
         format.setLenient(true);
         try {
-            //TODO throws parseExceptions when running on a real phone
             date = format.parse(twitterFormat);
             //Log.d(TAG, "dateFromJSONString: Original: "+twitterFormat+" Filter: "+LARGE_TWITTER_DATE_FORMAT+" Final: "+date);
         } catch (ParseException e) {

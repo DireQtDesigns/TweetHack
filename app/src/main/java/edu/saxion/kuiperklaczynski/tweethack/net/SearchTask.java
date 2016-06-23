@@ -32,14 +32,13 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
  */
 public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
 
-    /**
-     * TODO, Robin
-     */
-
-
     private final String TAG = "SearchTask";
 
-
+    /**
+     * GET tweet list based on a given search term
+     * @param params String 0 and 1 are AuthTokens, 2 is BearerToken, 3 is searchterm and 4 is additional parameters
+     * @return TweetList with tweets containing the given searchterm
+     */
     @Override
     protected ArrayList<Tweet> doInBackground(String... params) {
         JSONObject jSONObject = null;
@@ -103,7 +102,6 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
             try {
                 HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
 
-                //TODO: add user token support
                 conn.addRequestProperty("Authorization", token);
 
                 conn.setRequestMethod("GET");
@@ -157,6 +155,10 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
         return tweets;
     }
 
+    /**
+     * uses tweetlist with a certain method in the mainactivity, used method is based on given additional parameters in the doInBackground
+     * @param tweets tweets with search parameter
+     */
     @Override
     protected void onPostExecute(ArrayList<Tweet> tweets) {
         if (tweets == null) return;

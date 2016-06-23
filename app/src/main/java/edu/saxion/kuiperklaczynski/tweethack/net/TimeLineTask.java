@@ -36,13 +36,13 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
  */
 public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
 
-    /**
-     * TODO: Robin
-     */
-
-
     private final String TAG = "TimeLineTask";
 
+    /**
+     * GET timeline of logged in user
+     * @param params String 0 and 1 are AuthTokens and 2 is additional parameters
+     * @return Tweetlist with Timeline
+     */
     @Override
     protected ArrayList<Tweet> doInBackground(String... params) {
 
@@ -108,6 +108,10 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
         return tweets;
     }
 
+    /**
+     * uses tweetlist with a certain method in the mainactivity, used method is based on given additional parameters in the doInBackground
+     * @param tweets tweetList of timeline
+     */
     @Override
     protected void onPostExecute(ArrayList<Tweet> tweets) {
         if (tweets == null) return;

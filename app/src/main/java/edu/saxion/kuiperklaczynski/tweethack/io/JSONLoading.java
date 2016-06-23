@@ -58,7 +58,6 @@ public class JSONLoading {
 
             //OR...... Just make an empty constructor, i was being an idiot, don't mind
             JSONObject jsonUser = jsonStatus.getJSONObject("user");
-            //TODO Add all the other crap, repetitive af, i'll handle it.
 
             if(Settings.DEBUG == Settings.IO || Settings.DEBUG == Settings.ALL) {
                 Log.d(TAG, "Loading tweet id:               " + jsonStatus.getString("id_str"));
@@ -79,7 +78,6 @@ public class JSONLoading {
             status.setIn_reply_to_status_id_str(jsonStatus.getString("in_reply_to_status_id_str"));
 
             status.setId(jsonStatus.getLong("id"));
-            //TODO MOAR info
 
             fillUser(jsonUser, user);
 
@@ -127,7 +125,6 @@ public class JSONLoading {
         user.setScreenname(jsonUser.getString("screen_name"));
         user.setProfile_banner_url("profile_banner_url");
         user.setId(jsonUser.getLong("id"));
-        //TODO ALL THE STUFFS
     }
 
     public static ArrayList<Tweet> repliesTo(ArrayList<Tweet> from, Tweet to) {

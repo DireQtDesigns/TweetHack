@@ -119,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "onCreate: BearerToken Already Existed");
         }
 
-        //getting the authtoken TODO: auth token getting
         if (prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
             fillAccessTokens(prefs.getString("access_token", null), prefs.getString("access_token_secret", null));
             Log.d(TAG, "onCreate: User already authenticated, no need to ask for re-authorisation");

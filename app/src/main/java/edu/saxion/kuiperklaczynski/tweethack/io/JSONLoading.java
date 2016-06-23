@@ -46,7 +46,13 @@ public class JSONLoading {
         }
     }
 
-    public static ArrayList<Tweet> readJSONArray(JSONArray statuses) throws JSONException, IOException {
+    /**
+     * reads the given JSONArray and gives back the contents in the form of Tweet Objects
+     * @param statuses jsonArray
+     * @return contents of JSONArray converted to TweetList
+     * @throws JSONException when reading the JSONArray goes wrong
+     */
+    public static ArrayList<Tweet> readJSONArray(JSONArray statuses) throws JSONException {
 
         ArrayList<Tweet> tempTweets = new ArrayList<>();
 
@@ -108,9 +114,8 @@ public class JSONLoading {
      * Fetches data from jsonCode using readAssetIntoString, into json data, then into object structures. nullnullnullnullnullnullnullnullnullnullnullnull, oh wait...
      * @author Leon
      * @throws JSONException If object or data cannot be found etc.
-     * @throws IOException If file cannot be found.
      */
-    public static ArrayList<Tweet> readJSON(String jsonCode) throws JSONException, IOException {
+    public static ArrayList<Tweet> readJSON(String jsonCode) throws JSONException {
         if(Settings.DEBUG == Settings.IO || Settings.DEBUG == Settings.ALL) Log.d("JSONLoader", jsonCode);
         JSONObject jason = new JSONObject(jsonCode);
         JSONArray statuses = jason.getJSONArray("statuses");
@@ -118,6 +123,12 @@ public class JSONLoading {
         return readJSONArray(statuses);
     }
 
+    /**
+     * files given user object with given jsoncode, used by readJSONArray and UserTask
+     * @param jsonUser jsoncode of user
+     * @param user user object to fill
+     * @throws JSONException when reading JSON goes wrong
+     */
     public static void fillUser(JSONObject jsonUser, User user) throws JSONException {
         //Set user info
         user.setName(jsonUser.getString("name"));

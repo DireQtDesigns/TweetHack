@@ -51,7 +51,10 @@ public class TweetDetailActivity extends AppCompatActivity {
     TweetListAdapter tweetListAdapter;
     public Tweet detailTweet;
 
-
+    /**
+     * initializes the activity by getting the relevant tweet from the MainActitivity and filling views with the data
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,10 +79,9 @@ public class TweetDetailActivity extends AppCompatActivity {
             id_str = detailTweet.getIdStr();
             id = detailTweet.getId();
         }
-        //TODO: add replies using network
-        //commented out because this needs to be networking shiz
-        //repliesTo = JSONLoading.repliesTo(tweetsList, detailTweet);
-        tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, repliesTo); //TODO Implement actual tweets list, the above only filters out the non-replies to the dummy tweets
+
+
+        tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, repliesTo);
         ListView replyList = (ListView) findViewById(R.id.tweetDetailReplyList);
         if (repliesTo.size() > 0) {
             TextView noReplyView = (TextView) findViewById(R.id.tweetDetailNoRepliesView);
@@ -168,6 +170,11 @@ public class TweetDetailActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * enables sending a tweet to the sender of the featured tweet
+     * @param text
+     * @param view
+     */
     private void sendTweet(String text, View view) {
         Intent intent = new Intent(this, NewTweetActivity.class);
         intent.putExtra("body", text);
@@ -195,6 +202,10 @@ public class TweetDetailActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    /**
+     * gets the OAuthAccessToken
+     * @return OAuthAccessToken
+     */
     public OAuth1AccessToken getAccessToken() {
         SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
         String accessTokenStr = prefs.getString("access_token", "");

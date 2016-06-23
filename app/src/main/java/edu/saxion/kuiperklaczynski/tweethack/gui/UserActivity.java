@@ -29,6 +29,10 @@ public class UserActivity extends AppCompatActivity {
 
     private static UserActivity instance;
 
+    /**
+     * singleton class
+     * @return this activity
+     */
     public static UserActivity getInstance() {
         if (instance == null) {
             return new UserActivity();
@@ -41,6 +45,10 @@ public class UserActivity extends AppCompatActivity {
 
     public static List<Tweet> tweetsList = new ArrayList<>();
 
+    /**
+     * adds the given tweet list to the end of the tweetList
+     * @param list given tweets to add
+     */
     public void addTweetsList(ArrayList<Tweet> list) {
         tweetsList.addAll(list);
         ((TweetListAdapter)tweetsListView.getAdapter()).notifyDataSetChanged();
@@ -53,6 +61,10 @@ public class UserActivity extends AppCompatActivity {
     private String fullName, username, avatarURL, bannerURL;
     ListView tweetsListView;
 
+    /**
+     * initialises the activity, getting the (logged in) user from mainactivity
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         instance = this;
@@ -131,6 +143,10 @@ public class UserActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * called to add tweets to the tweetList
+     * @param maxID
+     */
     private void getUserTweets(long maxID) {
         flag_loading = true;
         String s;

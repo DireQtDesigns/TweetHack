@@ -45,6 +45,13 @@ public class TweetListAdapter extends ArrayAdapter<Tweet> {
         tweets = objects;
     }
 
+    /**
+     * fills the given view wih the relevant data form tweets ArrayList
+     * @param position position in the arraylist
+     * @param convertView view to fill
+     * @param parent parent View
+     * @return
+     */
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 

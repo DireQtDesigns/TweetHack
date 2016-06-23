@@ -20,6 +20,8 @@ import edu.saxion.kuiperklaczynski.tweethack.net.RequestTokenTask;
 
 public class AuthActivity extends AppCompatActivity {
 
+    //TODO: javadoc
+
     private static final String API_KEY = "4LiUJZIHjuFT6IVaGBCZooSRw", API_SECRET = "yrxAVjSOd7oyqOKCSwpAVKCsktOlw0rR8ZwjGUOQNnyxiz13QL";
     private static final String TAG = "AuthActivity";
     private static String callback = "http://www.4chan.org";

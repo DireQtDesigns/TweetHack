@@ -16,6 +16,8 @@ import edu.saxion.kuiperklaczynski.tweethack.R;
 
 public class SearchActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
 
+    //TODO: Javadoc
+
     SearchView mSearchView;
 
     @Override

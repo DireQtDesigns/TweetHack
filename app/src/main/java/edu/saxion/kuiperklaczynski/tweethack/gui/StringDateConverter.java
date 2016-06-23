@@ -33,6 +33,12 @@ public class StringDateConverter {
         return dateMillis;
     }*/
 
+    /**
+     * gives you how long ago a certain date was, neatly formatted
+     * @param currentMillis current time in ms
+     * @param given date from which to calculate
+     * @return neatly formatted String
+     */
     public static String agoString(long currentMillis, Date given) {
         String s = "";
         if (given == null) return "";
@@ -56,6 +62,11 @@ public class StringDateConverter {
         return s;
     }
 
+    /**
+     * gets the date from the given jsonString
+     * @param twitterFormat JSONString
+     * @return date in Date format
+     */
     public static Date dateFromJSONString(String twitterFormat) {
         String LARGE_TWITTER_DATE_FORMAT = "EEE MMM dd HH:mm:ss Z yyyy";
         Date date = null;
@@ -71,6 +82,7 @@ public class StringDateConverter {
         return date;
     }
 
+    @Deprecated
     public static int monthValue(String monthString) {
         int value = 0;
         switch(monthString.toLowerCase()) {

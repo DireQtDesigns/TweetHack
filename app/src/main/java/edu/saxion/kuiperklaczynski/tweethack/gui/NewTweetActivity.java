@@ -30,6 +30,8 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
 
 public class NewTweetActivity extends AppCompatActivity {
 
+    //TODO: javadoc
+
     private static final String TAG = "NewTweetAct";
 
     @Override

@@ -32,6 +32,11 @@ import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
  * Created by Robin on 24-5-2016.
  */
 public class RequestTokenTask extends AsyncTask<Context,Void,String>{
+
+    /**
+     * Gets a request token from twitter by submitting a request defined by the OauthRequestToken class.
+     */
+
     private static final String API_KEY = "4LiUJZIHjuFT6IVaGBCZooSRw", API_SECRET = "yrxAVjSOd7oyqOKCSwpAVKCsktOlw0rR8ZwjGUOQNnyxiz13QL";
     private static String callback = "http://www.4chan.org";
     private WebView webView;

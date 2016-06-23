@@ -13,6 +13,10 @@ import java.io.InputStream;
  */
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 
+    /**
+     * Downloads an image and then applies it to an Imageview, defined by the constructor.
+     */
+
     ImageView imageViewToApplyTo;
     String urldisplay;
     public static final String TAG = "TweetHax_TwListAdapter"; //Log Tag

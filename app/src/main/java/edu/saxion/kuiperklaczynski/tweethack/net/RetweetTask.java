@@ -20,6 +20,10 @@ import com.github.scribejava.core.oauth.OAuth10aService;
  * Created by Robin on 24-5-2016.
  */
 public class RetweetTask extends AsyncTask<Context,Void,String>{
+
+    /**
+     * Retweets a tweet by submitting a POST-request to "https://api.twitter.com/1.1/statuses/retweet/" where only the tweet-id is required as argument. Sets the opacity of the retweet imageview in onPostExecute.
+     */
     private static final String API_KEY = "4LiUJZIHjuFT6IVaGBCZooSRw", API_SECRET = "yrxAVjSOd7oyqOKCSwpAVKCsktOlw0rR8ZwjGUOQNnyxiz13QL";
     private static String callback = "http://www.4chan.org";
     private final String TAG = "RetweetTask";

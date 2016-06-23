@@ -31,6 +31,12 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
  * Created by Robin on 15-6-2016.
  */
 public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
+
+    /**
+     * TODO, Robin
+     */
+
+
     private final String TAG = "SearchTask";
 
 

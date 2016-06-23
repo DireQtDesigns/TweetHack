@@ -16,9 +16,14 @@ import com.github.scribejava.core.oauth.OAuth10aService;
 import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
 
 /**
- * Created by Robin on 24-5-2016.
+ * Created by Leonk on 18-6-2016.
  */
-public class AccessTokenTraderTask extends AsyncTask<Context,Void,String>{
+public class AccessTokenTraderTask extends AsyncTask<Context,Void,String> {
+
+    /**
+     * Fetches the Access token en -secret by trading in the request tokens and verifier for the access tokens, which will be saved in the savedPreferences in onPostExecute().
+     */
+
     private static final String API_KEY = "4LiUJZIHjuFT6IVaGBCZooSRw", API_SECRET = "yrxAVjSOd7oyqOKCSwpAVKCsktOlw0rR8ZwjGUOQNnyxiz13QL";
     private static String callback = "http://www.4chan.org";
     private final String TAG = "AccessTokenTask";
@@ -26,6 +31,7 @@ public class AccessTokenTraderTask extends AsyncTask<Context,Void,String>{
     private OAuth1RequestToken requestToken;
     private OAuth1AccessToken accessToken;
     private Context c;
+
 
     final OAuth10aService service = new ServiceBuilder()
                 .apiKey(API_KEY)

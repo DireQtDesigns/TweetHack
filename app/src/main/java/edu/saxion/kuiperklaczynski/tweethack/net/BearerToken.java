@@ -25,6 +25,11 @@ import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
  * Created by Robin on 24-5-2016.
  */
 public class BearerToken extends AsyncTask<Context,Void,String>{
+
+
+    /**
+     * Fetches the Bearer tokens (required for basic connectivity, ie searching) by trading in the API keys at "https://api.twitter.com/oauth2/token"
+     */
     private final String API_KEY = "4LiUJZIHjuFT6IVaGBCZooSRw", API_SECRET = "yrxAVjSOd7oyqOKCSwpAVKCsktOlw0rR8ZwjGUOQNnyxiz13QL";
 
     private final String TAG = "BearerToken";

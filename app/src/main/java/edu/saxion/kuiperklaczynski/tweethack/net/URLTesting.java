@@ -13,6 +13,8 @@ import java.net.URL;
  */
 public class URLTesting {
 
+    //DEPRECATED
+
     private static final String TAG = "TweetHax_URLTesting"; //Log Tag
 
 

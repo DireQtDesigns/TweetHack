@@ -472,6 +472,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * gets called when there's an error loading the tweets, to notify the user
+     * @param httpCode code that is returned. can give different messages based on the code
+     */
+    public static void networkFeedback(int httpCode) {
+        switch (httpCode) {
+            case 200: Toast.makeText(instance, "action was successful", Toast.LENGTH_SHORT).show(); break;
+            case 400: Toast.makeText(instance, "something went wrong in the app. If the problem persists, contact the developer", Toast.LENGTH_LONG).show(); break;
+            case 401: Toast.makeText(instance, "you're currently not logged in", Toast.LENGTH_SHORT).show(); break;
+            case 403: Toast.makeText(instance, "you just did something that's not allowed", Toast.LENGTH_SHORT).show(); break;
+            case 414: Toast.makeText(instance, "the search term was too long, please try something shorter", Toast.LENGTH_SHORT).show(); break;
+            case 429: Toast.makeText(instance, "too many actions in a short time, slow down cowboy", Toast.LENGTH_SHORT).show(); break;
+            case 500:
+            case 503: Toast.makeText(instance, "something is wrong with Twitter right now. Wait a minute and try again", Toast.LENGTH_SHORT).show(); break;
+
+            default: Toast.makeText(instance, "something went wrong", Toast.LENGTH_SHORT).show(); break;
+        }
+    }
+
+    /**
      * helper method to easily call SearchTask
      * @param sinceID
      * @param maxID

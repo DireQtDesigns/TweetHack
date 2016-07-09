@@ -16,27 +16,22 @@ import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
 
+import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
+import edu.saxion.kuiperklaczynski.tweethack.objects.AccessTokenInfo;
+
 /**
  * Created by Robin on 24-5-2016.
  */
-public class RetweetTask extends AsyncTask<Context,Void,String>{
+public class RetweetTask extends AsyncTask<Context,Void,Integer>{
 
     /**
      * Retweets a tweet by submitting a POST-request to "https://api.twitter.com/1.1/statuses/retweet/" where only the tweet-id is required as argument. Sets the opacity of the retweet imageview in onPostExecute.
      */
-    private static final String API_KEY = "4LiUJZIHjuFT6IVaGBCZooSRw", API_SECRET = "yrxAVjSOd7oyqOKCSwpAVKCsktOlw0rR8ZwjGUOQNnyxiz13QL";
-    private static String callback = "http://www.4chan.org";
     private final String TAG = "RetweetTask";
     private OAuth1AccessToken accessToken;
     private long id;
     private ImageView retweetView;
     private String response;
-
-    final OAuth10aService service = new ServiceBuilder()
-                .apiKey(API_KEY)
-                .apiSecret(API_SECRET)
-                .callback(callback)
-                .build(TwitterApi.instance());
 
     public RetweetTask(ImageView retweetView, long id, OAuth1AccessToken accessToken) {
         this.retweetView = retweetView;
@@ -45,25 +40,35 @@ public class RetweetTask extends AsyncTask<Context,Void,String>{
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        retweetView.setAlpha((float) 1);
+    protected void onPostExecute(Integer i) {
+        if (i == 200) {
+            retweetView.setAlpha((float) 1);
+        }
+        MainActivity.networkFeedback(i);
     }
 
     @Override
-    protected String doInBackground(Context... params) {
+    protected Integer doInBackground(Context... params) {
+        int code;
+
         try {
             String resourceURL = "https://api.twitter.com/1.1/statuses/retweet/";
             resourceURL += id;
             resourceURL += ".json";
 
-            final OAuthRequest request = new OAuthRequest(Verb.POST, resourceURL, service);
-            service.signRequest(accessToken, request);
-            response = request.send().toString();
+            final OAuthRequest request = new OAuthRequest(Verb.POST, resourceURL, AccessTokenInfo.getService());
+            AccessTokenInfo.getService().signRequest(accessToken, request);
+            Response r = request.send();
+            response = r.toString();
+
             Log.d(TAG, "doInBackground: Retweet Response: "+response);
+
+            code = r.getCode();
         } catch(Exception e) {
             Log.e(TAG, "doInBackground: ", e);
+            return -1;
         }
-        return response;
+        return code;
     }
 
 }

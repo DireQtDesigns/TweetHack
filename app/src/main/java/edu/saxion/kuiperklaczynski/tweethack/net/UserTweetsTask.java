@@ -1,6 +1,5 @@
 package edu.saxion.kuiperklaczynski.tweethack.net;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.github.scribejava.core.model.OAuth1AccessToken;
@@ -10,20 +9,20 @@ import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.security.spec.ECField;
 import java.util.ArrayList;
 
+import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
 import edu.saxion.kuiperklaczynski.tweethack.gui.UserActivity;
 import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
+import edu.saxion.kuiperklaczynski.tweethack.objects.AccessTokenInfo;
+import edu.saxion.kuiperklaczynski.tweethack.objects.ErrorCarrier;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
-import edu.saxion.kuiperklaczynski.tweethack.objects.User;
 
 /**
  * Created by Robin on 19-6-2016.
  */
-public class UserTweetsTask extends AsyncTask<String, Void, ArrayList<Tweet>>{
+public class UserTweetsTask extends ErrorTask<String, Void, ArrayList<Tweet>>{
     private static final String TAG = "UserTweetsTask";
 
     @Override
@@ -35,7 +34,7 @@ public class UserTweetsTask extends AsyncTask<String, Void, ArrayList<Tweet>>{
         Log.d(TAG, "doInBackground: " + url);
 
 
-        OAuth10aService service = RequestTokenTask.service;
+        OAuth10aService service = AccessTokenInfo.getService();
         Response response;
 
         OAuthRequest request = new OAuthRequest(Verb.GET, url, service);
@@ -44,7 +43,7 @@ public class UserTweetsTask extends AsyncTask<String, Void, ArrayList<Tweet>>{
 
         if (response.getCode() != 200) {
             Log.d(TAG, "doInBackground: response was " + response.getCode());
-            return null;
+            return failureHelper(response.getCode());
         }
 
         JSONArray jsonArray;
@@ -53,7 +52,7 @@ public class UserTweetsTask extends AsyncTask<String, Void, ArrayList<Tweet>>{
             jsonArray = new JSONArray(response.getBody());
         } catch (Exception e) {
             Log.e(TAG, "doInBackground: ", e);
-            return null;
+            return failureHelper(-1);
         }
 
         ArrayList<Tweet> tweets;
@@ -62,7 +61,7 @@ public class UserTweetsTask extends AsyncTask<String, Void, ArrayList<Tweet>>{
             tweets = JSONLoading.readJSONArray(jsonArray);
         } catch (Exception e) {
             Log.e(TAG, "doInBackground: ", e);
-            return null;
+            return failureHelper(-1);
         }
 
         Log.d(TAG, "doInBackground: " + jsonArray.toString());
@@ -72,6 +71,11 @@ public class UserTweetsTask extends AsyncTask<String, Void, ArrayList<Tweet>>{
 
     @Override
     protected void onPostExecute(ArrayList<Tweet> tweets) {
+        if (tweets.get(0) instanceof ErrorCarrier) {
+            MainActivity.networkFeedback(((ErrorCarrier) tweets.get(0)).getErrorCode());
+            return;
+        }
+
         ArrayList<Tweet> twitters = new ArrayList<>();
 
         for (int i = tweets.size() - 1; i >= 0; i--) {

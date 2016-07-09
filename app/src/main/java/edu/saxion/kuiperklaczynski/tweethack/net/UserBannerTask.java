@@ -14,6 +14,8 @@ import com.github.scribejava.core.oauth.OAuth10aService;
 
 import org.json.JSONObject;
 
+import edu.saxion.kuiperklaczynski.tweethack.objects.AccessTokenInfo;
+
 /**
  * Created by Robin on 24-5-2016.
  */
@@ -22,21 +24,12 @@ public class UserBannerTask extends AsyncTask<Context,Void,String>{
     /**
      * Fetches the user banner image by issueing a GET-request
      */
-
-    private static final String API_KEY = "4LiUJZIHjuFT6IVaGBCZooSRw", API_SECRET = "yrxAVjSOd7oyqOKCSwpAVKCsktOlw0rR8ZwjGUOQNnyxiz13QL";
-    private static String callback = "http://www.4chan.org";
     private final String TAG = "favoriteTask";
     private String imgUrl;
     private OAuth1AccessToken accessToken;
     private String screenName;
     private ImageView bannerView;
     private String response;
-
-    final OAuth10aService service = new ServiceBuilder()
-                .apiKey(API_KEY)
-                .apiSecret(API_SECRET)
-                .callback(callback)
-                .build(TwitterApi.instance());
 
     public UserBannerTask(ImageView bannerView, String screenName, OAuth1AccessToken accessToken) {
         this.bannerView = bannerView;
@@ -56,8 +49,8 @@ public class UserBannerTask extends AsyncTask<Context,Void,String>{
             resourceURL += "?";
             resourceURL += "screen_name="+screenName;
 
-            final OAuthRequest request = new OAuthRequest(Verb.GET, resourceURL, service);
-            service.signRequest(accessToken, request);
+            final OAuthRequest request = new OAuthRequest(Verb.GET, resourceURL, AccessTokenInfo.getService());
+            AccessTokenInfo.getService().signRequest(accessToken, request);
             String json = request.send().getBody();
             Log.d(TAG, "doInBackground: Banner Response"+json);
             JSONObject jason = new JSONObject(json);

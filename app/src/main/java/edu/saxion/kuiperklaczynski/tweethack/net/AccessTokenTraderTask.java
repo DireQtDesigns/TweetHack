@@ -14,6 +14,7 @@ import com.github.scribejava.core.model.OAuth1RequestToken;
 import com.github.scribejava.core.oauth.OAuth10aService;
 
 import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
+import edu.saxion.kuiperklaczynski.tweethack.objects.AccessTokenInfo;
 
 /**
  * Created by Leonk on 18-6-2016.
@@ -24,20 +25,11 @@ public class AccessTokenTraderTask extends AsyncTask<Context,Void,String> {
      * Fetches the Access token en -secret by trading in the request tokens and verifier for the access tokens, which will be saved in the savedPreferences in onPostExecute().
      */
 
-    private static final String API_KEY = "4LiUJZIHjuFT6IVaGBCZooSRw", API_SECRET = "yrxAVjSOd7oyqOKCSwpAVKCsktOlw0rR8ZwjGUOQNnyxiz13QL";
-    private static String callback = "http://www.4chan.org";
     private final String TAG = "AccessTokenTask";
     private String verifier;
     private OAuth1RequestToken requestToken;
     private OAuth1AccessToken accessToken;
     private Context c;
-
-
-    final OAuth10aService service = new ServiceBuilder()
-                .apiKey(API_KEY)
-                .apiSecret(API_SECRET)
-                .callback(callback)
-                .build(TwitterApi.instance());
 
     public AccessTokenTraderTask(OAuth1RequestToken requestToken, String verifier, Context c) {
         this.verifier = verifier;
@@ -60,7 +52,7 @@ public class AccessTokenTraderTask extends AsyncTask<Context,Void,String> {
     @Override
     protected String doInBackground(Context... params) {
         try {
-            final OAuth1AccessToken accessToken = service.getAccessToken(requestToken, verifier);
+            final OAuth1AccessToken accessToken = AccessTokenInfo.getService().getAccessToken(requestToken, verifier);
             SharedPreferences prefs = c.getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", c.MODE_PRIVATE);
             this.accessToken = accessToken;
             prefs.edit().putString("access_token", accessToken.getToken()).apply();
@@ -69,7 +61,7 @@ public class AccessTokenTraderTask extends AsyncTask<Context,Void,String> {
         } catch(Exception e) {
             Log.e(TAG, "doInBackground: ", e);
         }
-        return service.getAuthorizationUrl(requestToken);
+        return AccessTokenInfo.getService().getAuthorizationUrl(requestToken);
     }
 
 }

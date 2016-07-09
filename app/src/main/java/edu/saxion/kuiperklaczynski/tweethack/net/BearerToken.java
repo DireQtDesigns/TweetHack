@@ -20,6 +20,7 @@ import java.net.URLEncoder;
 import org.apache.commons.io.IOUtils;
 
 import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
+import edu.saxion.kuiperklaczynski.tweethack.objects.AccessTokenInfo;
 
 /**
  * Created by Robin on 24-5-2016.
@@ -30,99 +31,10 @@ public class BearerToken extends AsyncTask<Context,Void,String>{
     /**
      * Fetches the Bearer tokens (required for basic connectivity, ie searching) by trading in the API keys at "https://api.twitter.com/oauth2/token"
      */
-    private final String API_KEY = "4LiUJZIHjuFT6IVaGBCZooSRw", API_SECRET = "yrxAVjSOd7oyqOKCSwpAVKCsktOlw0rR8ZwjGUOQNnyxiz13QL";
 
     private final String TAG = "BearerToken";
 
     private Context c;
-
-    private String generateBearerToken(Context c) {
-        this.c = c;
-
-        URL url;
-        try {
-            url = new URL("https://api.twitter.com/oauth2/token");
-        } catch (MalformedURLException mue) {
-            Log.e(TAG, "generateBearerToken: ", mue);;
-            return null;
-        }
-
-        HttpURLConnection conn;
-        try {
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
-        } catch (Exception e) {
-            Log.e(TAG, "generateBearerToken: ", e);
-            return null;
-        }
-
-
-        String authString;
-        try {
-            authString = URLEncoder.encode(API_KEY, "UTF-8") + ":" + URLEncoder.encode(API_SECRET, "UTF-8");
-        } catch (UnsupportedEncodingException uee) {
-            Log.e(TAG, "generateBearerToken: ", uee);
-            return null;
-        }
-
-        String authStringBase64;
-
-        try {
-            authStringBase64 = Base64.encodeToString(authString.getBytes("UTF-8"), Base64.NO_WRAP);
-        } catch (Exception e) {
-            Log.e(TAG, "generateBearerToken: ", e);
-            return null;
-        }
-
-        conn.setRequestProperty("Authorization", "Basic " + authStringBase64);
-
-        conn.setRequestProperty("Content-Type", "application/x-www-from-urlencoded;charset=UTF-8");
-
-        conn.setDoOutput(true);
-
-        byte[] body;
-        try {
-            body = "grant_type=client_credentials".getBytes("UTF-8");
-        } catch (UnsupportedEncodingException uee) {
-            Log.e(TAG, "generateBearerToken: ", uee);
-            return null;
-        }
-
-        conn.setFixedLengthStreamingMode(body.length);
-
-        BufferedOutputStream os;
-
-        String token = null;
-
-        try {
-            os = new BufferedOutputStream(conn.getOutputStream());
-            os.write(body);
-            os.close();
-
-
-        if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
-            InputStream is = conn.getInputStream();
-            String response = IOUtils.toString(is, "UTF-8");
-            IOUtils.closeQuietly(is);
-            conn.disconnect();
-
-            if (response == null) Log.d(TAG, "generateBearerToken: response is null");
-
-            JSONObject jsonObject = new JSONObject(response);
-            token = jsonObject.getString("access_token");
-
-            if (token == null) Log.d(TAG, "generateBearerToken: token is null");
-            }
-        } catch (IOException | JSONException e) {
-            Log.e(TAG, "generateBearerToken: ", e);
-        }
-        return token;
-    }
-
-//    @Override
-//    protected String doInBackground(Context... params) {
-//        return generateBearerToken(params[0]);
-//    }
 
     @Override
     protected void onPostExecute(String s) {
@@ -145,8 +57,8 @@ public class BearerToken extends AsyncTask<Context,Void,String>{
             conn.setRequestMethod("POST");
 
             // encode api key and secret
-            String authString = URLEncoder.encode(API_KEY, "UTF-8") + ":" +
-                    URLEncoder.encode(API_SECRET, "UTF-8");
+            String authString = URLEncoder.encode(AccessTokenInfo.getApiKey(), "UTF-8") + ":" +
+                    URLEncoder.encode(AccessTokenInfo.getApiSecret(), "UTF-8");
 
             // apply base64 encoding on the encode string
             String authStringBase64 = Base64.encodeToString(authString.getBytes("UTF-8"), Base64.NO_WRAP);

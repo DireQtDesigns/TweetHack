@@ -1,8 +1,6 @@
 package edu.saxion.kuiperklaczynski.tweethack.net;
 
-import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import com.github.scribejava.core.model.OAuthRequest;
@@ -25,12 +23,14 @@ import javax.net.ssl.HttpsURLConnection;
 import edu.saxion.kuiperklaczynski.tweethack.gui.ListType;
 import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
 import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
+import edu.saxion.kuiperklaczynski.tweethack.objects.AccessTokenInfo;
+import edu.saxion.kuiperklaczynski.tweethack.objects.ErrorCarrier;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
 
 /**
  * Created by Robin on 15-6-2016.
  */
-public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
+public class SearchTask extends ErrorTask<String, Void, ArrayList<Tweet>> {
 
     private final String TAG = "SearchTask";
 
@@ -44,11 +44,13 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
         JSONObject jSONObject = null;
         String searchQuery;
 
+        ArrayList<Tweet> tweets;
+
         try {
             searchQuery = URLEncoder.encode(params[3], "UTF-8");
         } catch (UnsupportedEncodingException uee) {
             Log.e(TAG, "doInBackground: ", uee );
-            return null;
+            return failureHelper(-1);
         }
 
         //if we're using accessTokens
@@ -63,7 +65,7 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
                 url = "https://api.twitter.com/1.1/search/tweets.json?q=" + searchQuery;
             }
 
-            OAuth10aService service = RequestTokenTask.service;
+            OAuth10aService service = AccessTokenInfo.getService();
             Response response;
 
             OAuthRequest request = new OAuthRequest(Verb.GET, url, service);
@@ -72,13 +74,14 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
 
             if (response.getCode() != 200) {
                 Log.d(TAG, "doInBackground: code was " + response.getCode());
-                return null;
+                return failureHelper(response.getCode());
             }
 
             try {
                 jSONObject = new JSONObject(response.getBody());
             } catch (Exception e) {
                 Log.e(TAG, "doInBackground: ", e);
+                return failureHelper(-1);
             }
 
         //if we're using bearerTokens
@@ -96,7 +99,7 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
                 }
             } catch (MalformedURLException mue) {
                 Log.e(TAG, "doInBackground: ", mue);
-                return null;
+                return failureHelper(-1);
             }
 
             try {
@@ -113,35 +116,35 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
                     jSONObject = new JSONObject(response);
                 } else {
                     Log.d(TAG, "doInBackground: httpstatus = " + conn.getResponseCode());
+                    return failureHelper(conn.getResponseCode());
                 }
                 conn.disconnect();
             } catch (Exception e) {
                 Log.e(TAG, "doInBackground: ", e);
-                return null;
+                return failureHelper(-1);
             }
 
         } else {
-            return null;
+            return failureHelper(-1);
         }
-
-        ArrayList<Tweet> tweets;
 
         if (jSONObject != null) {
             try {
                 tweets = JSONLoading.readJSON(jSONObject.toString());
             } catch (Exception e) {
                 Log.e(TAG, "doInBackground: ", e);
-                return null;
+                return failureHelper(-1);
             }
         } else {
             Log.d(TAG, "doInBackground: jSONObject was null");
-            return null;
+            return failureHelper(-1);
         }
 
         Log.d(TAG, "doInBackground: succesfully loaded search");
 
         if (tweets == null) {
             Log.d(TAG, "doInBackground: tweets is null");
+            return failureHelper(-1);
         }
 
         if (!params[4].isEmpty()) {
@@ -155,13 +158,27 @@ public class SearchTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
         return tweets;
     }
 
+//    /**
+//     * when something goes wrong, this is called
+//     * @param code http error code
+//     * @return Tweetlist
+//     */
+//    private ArrayList<Tweet> failureHelper(int code) {
+//        ArrayList<Tweet> tweets = new ArrayList<>();
+//        tweets.add(new ErrorCarrier(code));
+//        return tweets;
+//    }
+
     /**
      * uses tweetlist with a certain method in the mainactivity, used method is based on given additional parameters in the doInBackground
      * @param tweets tweets with search parameter
      */
     @Override
     protected void onPostExecute(ArrayList<Tweet> tweets) {
-        if (tweets == null) return;
+        if (tweets.get(0) instanceof ErrorCarrier) {
+            MainActivity.networkFeedback(((ErrorCarrier) tweets.get(0)).getErrorCode());
+            return;
+        }
 
         MainActivity m = MainActivity.getInstance();
 

@@ -18,29 +18,23 @@ import com.github.scribejava.core.oauth.OAuth10aService;
 
 import java.net.URLEncoder;
 
+import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
+import edu.saxion.kuiperklaczynski.tweethack.objects.AccessTokenInfo;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
 
 /**
  * Created by Robin on 24-5-2016.
  */
-public class SendTweetTask extends AsyncTask<Context,Void,String>{
+public class SendTweetTask extends AsyncTask<Context,Void,Integer>{
 
     /**
      * Sends a tweet by submitting a POST-request to "https://api.twitter.com/1.1/statuses/update.json", only the status-body is required, and is URLEncoded. Returns a toast to the user when completed.
      */
 
-    private static final String API_KEY = "4LiUJZIHjuFT6IVaGBCZooSRw", API_SECRET = "yrxAVjSOd7oyqOKCSwpAVKCsktOlw0rR8ZwjGUOQNnyxiz13QL";
-    private static String callback = "http://www.4chan.org";
     private OAuth1AccessToken accessToken;
     private final String TAG = "SendTweetTask";
     private Tweet tweet;
     private Context c;
-
-    final OAuth10aService service = new ServiceBuilder()
-                .apiKey(API_KEY)
-                .apiSecret(API_SECRET)
-                .callback(callback)
-                .build(TwitterApi.instance());
 
     public SendTweetTask(Tweet tweet, Context c, OAuth1AccessToken accessToken) {
         this.accessToken = accessToken;
@@ -49,14 +43,17 @@ public class SendTweetTask extends AsyncTask<Context,Void,String>{
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        Toast.makeText(c, "Sent tweet successfully", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "onPostExecute: " + s);
+    protected void onPostExecute(Integer i) {
+        if (i == 200) {
+            Toast.makeText(c, "Sent tweet successfully", Toast.LENGTH_SHORT).show();
+        } else {
+            MainActivity.networkFeedback(i);
+        }
     }
 
     @Override
-    protected String doInBackground(Context... params) {
-        String result = "";
+    protected Integer doInBackground(Context... params) {
+        int code;
         try {
             String url = "https://api.twitter.com/1.1/statuses/update.json";
             url += "?status=";
@@ -66,15 +63,18 @@ public class SendTweetTask extends AsyncTask<Context,Void,String>{
                 url += tweet.getIn_reply_to_status_id();
                 Log.d(TAG, "doInBackground: Adding replyId to Url: "+tweet.getIn_reply_to_status_id());
             }
-            final OAuthRequest request = new OAuthRequest(Verb.POST, url, service);
-            service.signRequest(accessToken, request);
+            final OAuthRequest request = new OAuthRequest(Verb.POST, url, AccessTokenInfo.getService());
+            AccessTokenInfo.getService().signRequest(accessToken, request);
             Response res = request.send();
+
+            code = res.getCode();
             Log.d(TAG, "doInBackground: "+res.toString());
 
         } catch(Exception e) {
             Log.e(TAG, "doInBackground: ", e);
+            return -1;
         }
-        return result;
+        return code;
     }
 
 }

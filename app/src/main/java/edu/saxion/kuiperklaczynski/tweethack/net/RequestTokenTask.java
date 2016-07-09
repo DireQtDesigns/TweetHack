@@ -27,6 +27,7 @@ import java.net.URLEncoder;
 
 import edu.saxion.kuiperklaczynski.tweethack.gui.AuthActivity;
 import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
+import edu.saxion.kuiperklaczynski.tweethack.objects.AccessTokenInfo;
 
 /**
  * Created by Robin on 24-5-2016.
@@ -37,17 +38,9 @@ public class RequestTokenTask extends AsyncTask<Context,Void,String>{
      * Gets a request token from twitter by submitting a request defined by the OauthRequestToken class.
      */
 
-    private static final String API_KEY = "4LiUJZIHjuFT6IVaGBCZooSRw", API_SECRET = "yrxAVjSOd7oyqOKCSwpAVKCsktOlw0rR8ZwjGUOQNnyxiz13QL";
-    private static String callback = "http://www.4chan.org";
     private WebView webView;
     private final String TAG = "RequestToken";
     private OAuth1RequestToken requestToken;
-
-    public static final OAuth10aService service = new ServiceBuilder()
-                .apiKey(API_KEY)
-                .apiSecret(API_SECRET)
-                .callback(callback)
-                .build(TwitterApi.instance());
 
     public RequestTokenTask(WebView webView) {
         this.webView = webView;
@@ -63,12 +56,12 @@ public class RequestTokenTask extends AsyncTask<Context,Void,String>{
     protected String doInBackground(Context... params) {
         OAuth1RequestToken requestToken = new OAuth1RequestToken("", "");
         try {
-            requestToken = service.getRequestToken();
+            requestToken = AccessTokenInfo.getService().getRequestToken();
             AuthActivity.requestToken = requestToken;
         } catch(Exception e) {
             Log.e(TAG, "doInBackground: ", e);
         }
-        return service.getAuthorizationUrl(requestToken);
+        return AccessTokenInfo.getService().getAuthorizationUrl(requestToken);
     }
 
 }

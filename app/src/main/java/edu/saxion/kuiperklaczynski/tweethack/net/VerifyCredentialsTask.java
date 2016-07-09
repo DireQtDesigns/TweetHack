@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
 import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
+import edu.saxion.kuiperklaczynski.tweethack.objects.AccessTokenInfo;
 import edu.saxion.kuiperklaczynski.tweethack.objects.User;
 
 /**
@@ -28,7 +29,7 @@ public class VerifyCredentialsTask extends AsyncTask<String, Void, User> {
 
         String url = ("https://api.twitter.com/1.1/account/verify_credentials.json");
 
-        OAuth10aService service = RequestTokenTask.service;
+        OAuth10aService service = AccessTokenInfo.getService();
         Response response;
 
         OAuthRequest request = new OAuthRequest(Verb.GET, url, service);

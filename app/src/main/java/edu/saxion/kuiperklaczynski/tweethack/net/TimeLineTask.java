@@ -1,9 +1,6 @@
 package edu.saxion.kuiperklaczynski.tweethack.net;
 
-import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.github.scribejava.core.model.OAuth1AccessToken;
 import com.github.scribejava.core.model.OAuthRequest;
@@ -11,30 +8,21 @@ import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth10aService;
 
-import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import edu.saxion.kuiperklaczynski.tweethack.gui.ListType;
 import edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity;
 import edu.saxion.kuiperklaczynski.tweethack.io.JSONLoading;
+import edu.saxion.kuiperklaczynski.tweethack.objects.AccessTokenInfo;
+import edu.saxion.kuiperklaczynski.tweethack.objects.ErrorCarrier;
 import edu.saxion.kuiperklaczynski.tweethack.objects.Tweet;
 
 /**
  * Created by Robin on 18-6-2016.
  */
-public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
+public class TimeLineTask extends ErrorTask<String, Void, ArrayList<Tweet>> {
 
     private final String TAG = "TimeLineTask";
 
@@ -45,6 +33,7 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
      */
     @Override
     protected ArrayList<Tweet> doInBackground(String... params) {
+        ArrayList<Tweet> tweets;
 
         OAuth1AccessToken accessToken = new OAuth1AccessToken(params[0], params[1]);
 
@@ -58,7 +47,7 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
 
         JSONArray jsonArray;
 
-        OAuth10aService service = RequestTokenTask.service;
+        OAuth10aService service = AccessTokenInfo.getService();
         Response response;
 
         OAuthRequest request = new OAuthRequest(Verb.GET, url, service);
@@ -67,33 +56,32 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
 
         if (response.getCode() != 200) {
             Log.d(TAG, "doInBackground: response was " + response.getCode());
-            return null;
+            return failureHelper(response.getCode());
         }
 
         try {
             jsonArray = new JSONArray(response.getBody());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return failureHelper(-1);
         }
-
-        ArrayList<Tweet> tweets;
 
         if (jsonArray != null) {
             try {
                 tweets = JSONLoading.readJSONArray(jsonArray);
             } catch (Exception e) {
                 Log.e(TAG, "doInBackground: ", e);
-                return null;
+                return failureHelper(-1);
             }
         } else {
             Log.d(TAG, "doInBackground: jSONObject was null");
-            return null;
+            return failureHelper(-1);
         }
 
         Log.d(TAG, "doInBackground: succesfully loaded search");
 
         if (tweets == null) {
             Log.d(TAG, "doInBackground: tweets is null");
+            return failureHelper(-1);
         }
 
         if (!params[2].isEmpty()) {
@@ -114,7 +102,10 @@ public class TimeLineTask extends AsyncTask<String, Void, ArrayList<Tweet>> {
      */
     @Override
     protected void onPostExecute(ArrayList<Tweet> tweets) {
-        if (tweets == null) return;
+        if (tweets.get(0) instanceof ErrorCarrier) {
+            MainActivity.networkFeedback(((ErrorCarrier) tweets.get(0)).getErrorCode());
+            return;
+        }
 
         MainActivity m = MainActivity.getInstance();
 

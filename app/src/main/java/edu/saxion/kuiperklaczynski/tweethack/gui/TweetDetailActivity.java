@@ -67,17 +67,17 @@ public class TweetDetailActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if (getIntent().getStringExtra("TweetID") == null) {
+        id = getIntent().getLongExtra("TweetID", -1);
+        if (id == -1) {
             Log.e(TAG, "onCreate: TweetID = null");
         } else {
-            detailTweet = tweetsMap.get(getIntent().getStringExtra("TweetID"));
+            detailTweet = MainActivity.getInstance().getTweet(id);
             fullName = detailTweet.getUser().getName();
             username = detailTweet.getUser().getScreenname();
             avatarURL = detailTweet.getUser().getProfile_image_url();
             body = detailTweet.getText();
             timeAgo = StringDateConverter.agoString(System.currentTimeMillis(), StringDateConverter.dateFromJSONString(detailTweet.getCreated_at()));
             id_str = detailTweet.getIdStr();
-            id = detailTweet.getId();
         }
 
 
@@ -94,7 +94,7 @@ public class TweetDetailActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(TweetDetailActivity.this, TweetDetailActivity.class);
                 Tweet tweet = tweetsList.get(position);
-                intent.putExtra("TweetID", tweet.getIdStr());
+                intent.putExtra("TweetID", tweet.getId());
                 startActivity(intent);
             }
         });

@@ -57,53 +57,14 @@ public class JSONLoading {
         ArrayList<Tweet> tempTweets = new ArrayList<>();
 
         for (int i = 0; i < statuses.length(); i++) {
-            JSONObject jsonStatus = statuses.getJSONObject(i);
-            Tweet status = new Tweet(null, null, 0, null, null, null, null, null, null, null, null, null, null, 0, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-            User user = new User(null, null, null, null, null, null, null, null, null, null, null, null, 0, null, null, null, null, null, null, null,
-                    null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+            //Creates the Tweet
+            Tweet tweet = new Tweet(statuses.getJSONObject(i));
 
-            //OR...... Just make an empty constructor, i was being an idiot, don't mind
-            JSONObject jsonUser = jsonStatus.getJSONObject("user");
-
-            if(Settings.DEBUG == Settings.IO || Settings.DEBUG == Settings.ALL) {
-                Log.d(TAG, "Loading tweet id:               " + jsonStatus.getString("id_str"));
-                Log.d(TAG, "Text:                           " + jsonStatus.getString("text"));
-                Log.d(TAG, "Posted at:                      " + jsonStatus.getString("created_at"));
-                Log.d(TAG, "--------------------------------");
-                Log.d(TAG, "From user id:                   " + jsonUser.getString("id_str"));
-                Log.d(TAG, "Name:                           " + jsonUser.getString("name"));
-                Log.d(TAG, "--------------------------------");
-                Log.d(TAG, "--------------------------------");
-
-            }
-            //Set tweet info
-            //status.setId(jsonStatus.getInt("id")); Doesn't seem to be right, let's just leave it alone...
-            status.setIdStr(jsonStatus.getString("id_str"));
-            status.setText(jsonStatus.getString("text"));
-            status.setCreated_at(jsonStatus.getString("created_at"));
-            status.setIn_reply_to_status_id_str(jsonStatus.getString("in_reply_to_status_id_str"));
-
-            status.setId(jsonStatus.getLong("id"));
-
-            fillUser(jsonUser, user);
-
-            //Finishing up
-            status.setUser(user);
-            tempTweets.add(status);
-            tweetsMap.put(status.getIdStr(), status);
-
-            if(Settings.DEBUG == Settings.IO || Settings.DEBUG == Settings.ALL) {
-                Log.d(TAG, "Loaded tweet id:                " + status.getIdStr());
-                Log.d(TAG, "Text:                           " + status.getText());
-                Log.d(TAG, "Posted at:                      " + status.getCreated_at());
-                Log.d(TAG, "--------------------------------");
-                Log.d(TAG, "From user id:                   " + user.getId_str());
-                Log.d(TAG, "Name:                           " + user.getName());
-                Log.d(TAG, "--------------------------------");
-                Log.d(TAG, "--------------------------------");
-                Log.d(TAG, "Done");
-            }
+            //adds tweet to arraylist & hashmap
+            tempTweets.add(tweet);
+            tweetsMap.put(tweet.getIdStr(), tweet);
         }
+
         tweetsList = tempTweets;
 
 
@@ -111,7 +72,7 @@ public class JSONLoading {
     }
 
     /**
-     * Fetches data from jsonCode using readAssetIntoString, into json data, then into object structures. nullnullnullnullnullnullnullnullnullnullnullnull, oh wait...
+     * Fetches data from jsonCode using readAssetIntoString, into json data, then into object structures.
      * @author Leon
      * @throws JSONException If object or data cannot be found etc.
      */

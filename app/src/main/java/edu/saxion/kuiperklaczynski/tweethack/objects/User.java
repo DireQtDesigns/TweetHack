@@ -3,6 +3,9 @@ package edu.saxion.kuiperklaczynski.tweethack.objects;
 
 import android.support.annotation.Nullable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
@@ -46,14 +49,21 @@ public class User {
     private Boolean show_all_inline_media;
     private Tweet status;
     private Integer statuses_count;
-    private @Nullable
-    String time_zone;
+    private @Nullable String time_zone;
     private String url;
     private Integer itc_offset;
     private Boolean verified;
     private String withheld_in_countries;
     private String withheld_scope;
     private String screenname;
+
+    public User(JSONObject user) throws JSONException{
+        name = user.getString("name");
+        profile_image_url = user.getString("profile_image_url");
+        screenname = user.getString("screen_name");
+        //profile_banner_url = user.getString("profile_banner_url");
+        id = user.getLong("id");
+    }
 
     public User() {
 

@@ -1,6 +1,11 @@
 package edu.saxion.kuiperklaczynski.tweethack.objects;
 
 
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.math.BigInteger;
 
@@ -13,6 +18,7 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.tweet.Place;
  * Created by leonk on 25/04/2016.
  */
 public class Tweet implements Serializable {
+    private final String TAG = "Tweet";
 
     private String createdAt;
     private long id;
@@ -48,6 +54,19 @@ public class Tweet implements Serializable {
     private String[] withheld_in_countries;
     private String withheld_scope;
 
+    public Tweet(JSONObject tweet) {
+        try {
+            user = new User(tweet.getJSONObject("user"));
+
+            idStr = tweet.getString("id_str");
+            text = tweet.getString("text");
+            created_at = tweet.getString("created_at");
+            in_reply_to_status_id_str = tweet.getString("in_reply_to_status_id_str");
+            id = tweet.getLong("id");
+        } catch (JSONException e) {
+            Log.e(TAG, "Tweet: ", e);
+        }
+    }
 
     public Tweet(String in_reply_to_screen_name, String createdAt, Integer id, String idStr, String text, Contributor[] contributor, Coordinates coordinates, String created_at, User current_user_retweet, Entity[] entities, Integer favorite_count, Boolean favorited, String filter_level, long in_reply_to_status_id, String in_reply_to_status_id_str, String lang, Place place, Boolean possibly_sensitive, BigInteger quoted_status_id, String quoted_status_id_str, Tweet quoted_status, Integer retweet_count, Boolean retweeted, Tweet retweeted_status, String source, Boolean truncated, User user, Boolean withheld_copyright, String[] withheld_in_countries, String withheld_scope) {
         this.in_reply_to_screen_name = in_reply_to_screen_name;

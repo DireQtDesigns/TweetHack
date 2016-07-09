@@ -84,6 +84,8 @@ public class UserActivity extends AppCompatActivity {
             }
         }
 
+        tweetsList.clear();
+
         getUserTweets(-1);
 
         fullName = user.getName();

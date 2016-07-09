@@ -70,6 +70,15 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
+    public static Tweet getTweet(long id) {
+        for (Tweet t: tweetsList) {
+            if (t.getId() == id) {
+                return t;
+            }
+        }
+        return null;
+    }
+
     private static User user;
 
     public void fillUser(User u) {

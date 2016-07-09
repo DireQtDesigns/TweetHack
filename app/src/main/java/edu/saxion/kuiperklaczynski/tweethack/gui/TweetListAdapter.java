@@ -59,6 +59,7 @@ public class TweetListAdapter extends ArrayAdapter<Tweet> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.tweet_list_item, parent, false);
         }
         final Tweet tweet = tweets.get(position);
+
         TextView nameView = (TextView) convertView.findViewById(R.id.nameView);
         TextView timeView = (TextView) convertView.findViewById(R.id.timeView);
         TextView bodyView = (TextView) convertView.findViewById(R.id.bodyView);
@@ -81,7 +82,7 @@ public class TweetListAdapter extends ArrayAdapter<Tweet> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.getInstance(), TweetDetailActivity.class);
-                intent.putExtra("TweetID", tweets.get(position).getIdStr());
+                intent.putExtra("TweetID", tweets.get(position).getId());
                 MainActivity.getInstance().startActivity(intent);
             }
         });

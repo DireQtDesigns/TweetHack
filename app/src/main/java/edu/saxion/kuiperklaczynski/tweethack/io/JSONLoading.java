@@ -28,7 +28,7 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.User;
 public class JSONLoading {
 
     public static ArrayList<Tweet> tweetsList = new ArrayList<>();
-    public static Map<String, Tweet> tweetsMap = new HashMap<>(); //id_str is key
+    public static Map<Long, Tweet> tweetsMap = new HashMap<>(); //id_str is key
     private static final String TAG = "TweetHax_JSONLoader"; //Log Tag
 
     /**
@@ -47,7 +47,7 @@ public class JSONLoading {
 
             //adds tweet to arraylist & hashmap
             tempTweets.add(tweet);
-            tweetsMap.put(tweet.getIdStr(), tweet);
+            tweetsMap.put(tweet.getId(), tweet);
         }
 
         tweetsList = tempTweets;

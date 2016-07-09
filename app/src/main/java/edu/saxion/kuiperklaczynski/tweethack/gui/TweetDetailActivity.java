@@ -44,7 +44,7 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.tweet.entities.URL;
 public class TweetDetailActivity extends AppCompatActivity {
 
     public static ArrayList<Tweet> tweetsList = new ArrayList<>(), repliesTo = new ArrayList<>();
-    public static Map<String, Tweet> tweetsMap = new HashMap<>(); //id_str is key
+    public static Map<Long, Tweet> tweetsMap = new HashMap<>(); //id_str is key
     private static final String TAG = "TweetHax_TweetDetail"; //Log Tag
     private String fullName, username, avatarURL, body, timeAgo, id_str;
     private long id;
@@ -63,7 +63,6 @@ public class TweetDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         tweetsMap = JSONLoading.tweetsMap;
         tweetsList = JSONLoading.tweetsList;
-        Log.e(TAG, "onCreate: " + JSONLoading.tweetsList.toString());
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -71,7 +70,7 @@ public class TweetDetailActivity extends AppCompatActivity {
         if (id == -1) {
             Log.e(TAG, "onCreate: TweetID = null");
         } else {
-            detailTweet = MainActivity.getInstance().getTweet(id);
+            detailTweet = tweetsMap.get(id);
             fullName = detailTweet.getUser().getName();
             username = detailTweet.getUser().getScreenname();
             avatarURL = detailTweet.getUser().getProfile_image_url();

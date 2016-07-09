@@ -27,24 +27,9 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.User;
  */
 public class JSONLoading {
 
-    //public static final File INPUT_FILE = new File("C:/Users/leonk/AndroidStudioProjects/JSONTest/tweets.json");
     public static ArrayList<Tweet> tweetsList = new ArrayList<>();
     public static Map<String, Tweet> tweetsMap = new HashMap<>(); //id_str is key
     private static final String TAG = "TweetHax_JSONLoader"; //Log Tag
-
-    //public static void main(String[] args) {new JSONLoading().run();}
-
-    /**
-     * Gets everything up & running in a non-android environment.
-     * @author Leon
-     */
-    public static void run() {
-        try {
-            //readJSON(INPUT_FILE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * reads the given JSONArray and gives back the contents in the form of Tweet Objects
@@ -82,30 +67,6 @@ public class JSONLoading {
         JSONArray statuses = jason.getJSONArray("statuses");
 
         return readJSONArray(statuses);
-    }
-
-    /**
-     * files given user object with given jsoncode, used by readJSONArray and UserTask
-     * @param jsonUser jsoncode of user
-     * @param user user object to fill
-     * @throws JSONException when reading JSON goes wrong
-     */
-    public static void fillUser(JSONObject jsonUser, User user) throws JSONException {
-        //Set user info
-        user.setName(jsonUser.getString("name"));
-        user.setProfile_image_url(jsonUser.getString("profile_image_url"));
-        user.setScreenname(jsonUser.getString("screen_name"));
-        user.setProfile_banner_url("profile_banner_url");
-        user.setId(jsonUser.getLong("id"));
-    }
-
-    public static ArrayList<Tweet> repliesTo(ArrayList<Tweet> from, Tweet to) {
-        ArrayList<Tweet> temp = new ArrayList<Tweet>();
-        for(Tweet t : from) {
-            if(t.getIn_reply_to_status_id_str().equals(to.getIdStr())) temp.add(t);
-        }
-        Log.d(TAG, "repliesTo: "+temp.toString());
-        return temp;
     }
 
 }

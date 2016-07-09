@@ -50,10 +50,10 @@ public class VerifyCredentialsTask extends AsyncTask<String, Void, User> {
             return null;
         }
 
-        User user = new User();
+        User user;
 
         try {
-            JSONLoading.fillUser(jsonObject, user);
+            user = new User(jsonObject);
         } catch (JSONException e) {
             Log.e(TAG, "doInBackground: ", e);
             return null;
@@ -64,6 +64,7 @@ public class VerifyCredentialsTask extends AsyncTask<String, Void, User> {
 
     @Override
     protected void onPostExecute(User user) {
+        if (user == null) return;
         MainActivity.getInstance().fillUser(user);
     }
 }

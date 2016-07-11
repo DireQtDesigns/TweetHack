@@ -68,39 +68,6 @@ public class Tweet implements Serializable {
         }
     }
 
-    public Tweet(String in_reply_to_screen_name, String createdAt, Integer id, String idStr, String text, Contributor[] contributor, Coordinates coordinates, String created_at, User current_user_retweet, Entity[] entities, Integer favorite_count, Boolean favorited, String filter_level, long in_reply_to_status_id, String in_reply_to_status_id_str, String lang, Place place, Boolean possibly_sensitive, BigInteger quoted_status_id, String quoted_status_id_str, Tweet quoted_status, Integer retweet_count, Boolean retweeted, Tweet retweeted_status, String source, Boolean truncated, User user, Boolean withheld_copyright, String[] withheld_in_countries, String withheld_scope) {
-        this.in_reply_to_screen_name = in_reply_to_screen_name;
-        this.createdAt = createdAt;
-        this.id = id;
-        this.idStr = idStr;
-        this.text = text;
-        this.contributor = contributor;
-        this.coordinates = coordinates;
-        this.created_at = created_at;
-        this.current_user_retweet = current_user_retweet;
-        this.entities = entities;
-        this.favorite_count = favorite_count;
-        this.favorited = favorited;
-        this.filter_level = filter_level;
-        this.in_reply_to_status_id = in_reply_to_status_id;
-        this.in_reply_to_status_id_str = in_reply_to_status_id_str;
-        this.lang = lang;
-        this.place = place;
-        this.possibly_sensitive = possibly_sensitive;
-        this.quoted_status_id = quoted_status_id;
-        this.quoted_status_id_str = quoted_status_id_str;
-        this.quoted_status = quoted_status;
-        this.retweet_count = retweet_count;
-        this.retweeted = retweeted;
-        this.retweeted_status = retweeted_status;
-        this.source = source;
-        this.truncated = truncated;
-        this.user = user;
-        this.withheld_copyright = withheld_copyright;
-        this.withheld_in_countries = withheld_in_countries;
-        this.withheld_scope = withheld_scope;
-    }
-
     public Tweet() {}
 
     public Boolean isFavorited() {

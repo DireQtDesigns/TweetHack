@@ -65,53 +65,6 @@ public class User {
         id = user.getLong("id");
     }
 
-    public User() {
-
-    }
-
-    public User(Boolean is_translator, Boolean contributors_enabled, String created_at, Boolean default_profile, String description, Entity[] entities, Integer favourites_count, Type following, Type follow_request_sent, Integer followers_count, Integer friends_count, Boolean geo_enabled, long id, String id_str, String lang, Integer listed_count, String location, String name, Boolean notifications, String profile_background_color, String profile_background_image_url, String profile_background_image_url_https, Boolean profile_background_tile, String profile_banner_url, String profile_image_url, String profile_image_url_https, String profile_link_color, String profile_sidebar_border_color, String profile_sidebar_fill_color, String profile_text_color, Boolean show_all_inline_media, Tweet status, Integer statuses_count, String time_zone, String url, Integer itc_offset, Boolean verified, String withheld_in_countries, String withheld_scope, String screenname) {
-        this.is_translator = is_translator;
-        this.contributors_enabled = contributors_enabled;
-        this.created_at = created_at;
-        this.default_profile = default_profile;
-        this.description = description;
-        this.entities = entities;
-        this.favourites_count = favourites_count;
-        this.following = following;
-        this.follow_request_sent = follow_request_sent;
-        this.followers_count = followers_count;
-        this.friends_count = friends_count;
-        this.geo_enabled = geo_enabled;
-        this.id = id;
-        this.id_str = id_str;
-        this.lang = lang;
-        this.listed_count = listed_count;
-        this.location = location;
-        this.name = name;
-        this.notifications = notifications;
-        this.profile_background_color = profile_background_color;
-        this.profile_background_image_url = profile_background_image_url;
-        this.profile_background_image_url_https = profile_background_image_url_https;
-        this.profile_background_tile = profile_background_tile;
-        this.profile_banner_url = profile_banner_url;
-        this.profile_image_url = profile_image_url;
-        this.profile_image_url_https = profile_image_url_https;
-        this.profile_link_color = profile_link_color;
-        this.profile_sidebar_border_color = profile_sidebar_border_color;
-        this.profile_sidebar_fill_color = profile_sidebar_fill_color;
-        this.profile_text_color = profile_text_color;
-        this.show_all_inline_media = show_all_inline_media;
-        this.status = status;
-        this.statuses_count = statuses_count;
-        this.time_zone = time_zone;
-        this.url = url;
-        this.itc_offset = itc_offset;
-        this.verified = verified;
-        this.withheld_in_countries = withheld_in_countries;
-        this.withheld_scope = withheld_scope;
-        this.screenname = screenname;
-    }
-
     public Boolean getGeo_enabled() {
         return geo_enabled;
     }

@@ -11,16 +11,19 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.scribejava.core.model.OAuth1AccessToken;
+import com.ortiz.touch.TouchImageView;
 
 import java.io.FileNotFoundException;
 import java.net.HttpURLConnection;
@@ -46,10 +49,12 @@ public class TweetDetailActivity extends AppCompatActivity {
     public static ArrayList<Tweet> tweetsList = new ArrayList<>(), repliesTo = new ArrayList<>();
     public static Map<Long, Tweet> tweetsMap = new HashMap<>(); //id_str is key
     private static final String TAG = "TweetHax_TweetDetail"; //Log Tag
-    private String fullName, username, avatarURL, body, timeAgo, id_str;
+    private String fullName, username, avatarURL, body, timeAgo, id_str, media_url;
+    private int[] mediaIndices;
     private long id;
     TweetListAdapter tweetListAdapter;
     public Tweet detailTweet;
+
 
     /**
      * initializes the activity by getting the relevant tweet from the MainActitivity and filling views with the data
@@ -77,6 +82,10 @@ public class TweetDetailActivity extends AppCompatActivity {
             body = detailTweet.getText();
             timeAgo = StringDateConverter.agoString(System.currentTimeMillis(), StringDateConverter.dateFromJSONString(detailTweet.getCreated_at()));
             id_str = detailTweet.getIdStr();
+            if(detailTweet.getMedia() != null) {
+                media_url = detailTweet.getMedia().getMedia_URL();
+                mediaIndices = detailTweet.getMedia().getIndices();
+            }
         }
 
 
@@ -167,6 +176,33 @@ public class TweetDetailActivity extends AppCompatActivity {
                 }
             }
         });
+        if(media_url != null && !media_url.equals("")) {
+            TouchImageView tiv = (TouchImageView) findViewById(R.id.tweetDetailTweetImage);
+            final ScrollView sv = (ScrollView) findViewById(R.id.tweetDetailScrollView);
+            tiv.setVisibility(View.VISIBLE);
+            new DownloadImageTask(tiv).execute(media_url);
+
+            tiv.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction() & MotionEvent.ACTION_MASK) {
+
+                        case MotionEvent.ACTION_DOWN:
+                        case MotionEvent.ACTION_POINTER_DOWN:
+
+                            sv.requestDisallowInterceptTouchEvent(true);
+                            return true;
+
+                        case MotionEvent.ACTION_UP:
+                        case MotionEvent.ACTION_POINTER_UP:
+
+                            sv.requestDisallowInterceptTouchEvent(false);
+                            return true;
+                    }
+                    return false;
+                }
+            });
+        }
     }
 
     /**

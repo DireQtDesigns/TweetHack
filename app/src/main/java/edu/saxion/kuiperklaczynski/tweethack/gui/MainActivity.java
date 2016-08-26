@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private static MainActivity instance;
 
     private String bearerToken;
+    private int previousLastItemShown;
 
     public void addBearerToken(String s) {
         if (bearerToken == null) {
@@ -183,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-
+        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override

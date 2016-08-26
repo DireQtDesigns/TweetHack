@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="100dp"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
     android:id="@+id/ms"
     android:orientation="horizontal">
 
     <ImageView
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:id="@+id/avatarView"
         android:src="@drawable/dinosaur"
         android:layout_margin="5dp" />
@@ -14,41 +14,42 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="34dp">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:layout_width="180dp"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Large Text"
                 android:id="@+id/nameView"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textSize="13dp"
+                android:layout_marginTop="2dp" />
 
             <TextView
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="3m Ago"
                 android:id="@+id/timeView"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
                 android:autoText="false"
                 android:textAlignment="textEnd"
-                android:layout_marginRight="5dp" />
+                android:layout_marginRight="5dp"
+                android:textSize="10dp" />
         </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:text="gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"
-            android:id="@+id/bodyView" />
+            android:id="@+id/bodyView"
+            android:textSize="10dp"
+            android:layout_marginBottom="5dp" />
 
     </LinearLayout>
 

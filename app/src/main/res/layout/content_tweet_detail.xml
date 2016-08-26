@@ -2,79 +2,87 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
     android:background="@color/colorAccent3"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="edu.saxion.kuiperklaczynski.tweethack.gui.TweetDetailActivity"
     tools:showIn="@layout/activity_tweet_detail">
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical">
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:layout_alignParentStart="true"
+        android:fillViewport="false"
+        android:id="@+id/tweetDetailScrollView">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="20dp"
+            android:layout_margin="15dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/tweet_frame_background"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:animateLayoutChanges="false">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginLeft="20dp"
+                android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="20dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="5dp">
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorPrimary"
-                    android:padding="4dp">
+                    android:background="@color/colorAccent"
+                    android:padding="2dp">
 
                     <ImageView
                         android:id="@+id/tweetDetailAvatarView"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:src="@drawable/dinosaur" />
                 </RelativeLayout>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tweetDetailNameView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginLeft="5dp"
                         android:text="Name Placeholder"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textColor="@color/colorHeaderText" />
+                        android:textColor="@color/colorHeaderText"
+                        android:textSize="15dp" />
 
                     <TextView
                         android:id="@+id/tweetDetailUsernameView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginLeft="5dp"
                         android:text="\@Username_topkek"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/colorAccent" />
+                        android:textColor="@color/colorAccent"
+                        android:textSize="10dp" />
 
                     <TextView
                         android:id="@+id/tweetDetailTimeAgo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginLeft="5dp"
                         android:text="16y ago"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/colorAccent" />
+                        android:textColor="@color/colorAccent"
+                        android:textSize="10dp" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -88,6 +96,14 @@
                 android:autoLink="web"
                 android:text="Getting used to the massive loading times of ARM-emulations. AMD, figure out your virtualisation for crying out loud "
                 android:textSize="20dp" />
+
+            <com.ortiz.touch.TouchImageView
+                android:id="@+id/tweetDetailTweetImage"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:src="@drawable/dinosaur"
+                android:layout_margin="3dp"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:orientation="horizontal"

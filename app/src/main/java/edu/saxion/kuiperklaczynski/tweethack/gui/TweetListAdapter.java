@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -73,6 +74,11 @@ public class TweetListAdapter extends ArrayAdapter<Tweet> {
             timeView.setText(StringDateConverter.agoString(System.currentTimeMillis(), StringDateConverter.dateFromJSONString(tweet.getCreated_at())));
         }
         bodyView.setText(tweet.getText());
+        if(tweet.getMedia() != null) {
+            convertView.setBackgroundColor(convertView.getResources().getColor(R.color.colorAccent3));
+        } else {
+            convertView.setBackgroundColor(Color.WHITE);
+        }
 
         //Image fetching from URL
         String imgURL = tweet.getUser().getProfile_image_url();

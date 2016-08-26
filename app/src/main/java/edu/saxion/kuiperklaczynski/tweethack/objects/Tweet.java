@@ -7,12 +7,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.URLDecoder;
 
 import edu.saxion.kuiperklaczynski.tweethack.objects.tweet.Contributor;
 import edu.saxion.kuiperklaczynski.tweethack.objects.tweet.Coordinates;
 import edu.saxion.kuiperklaczynski.tweethack.objects.tweet.Entity;
 import edu.saxion.kuiperklaczynski.tweethack.objects.tweet.Place;
+import edu.saxion.kuiperklaczynski.tweethack.objects.tweet.entities.media.Media;
 
 /**
  * Created by leonk on 25/04/2016.
@@ -53,19 +56,33 @@ public class Tweet implements Serializable {
     private Boolean withheld_copyright;
     private String[] withheld_in_countries;
     private String withheld_scope;
+    private Media media;
 
     public Tweet(JSONObject tweet) {
         try {
             user = new User(tweet.getJSONObject("user"));
 
             idStr = tweet.getString("id_str");
-            text = tweet.getString("text");
+            text = tweet.getString("text").replace("&amp;", "&");
             created_at = tweet.getString("created_at");
             in_reply_to_status_id_str = tweet.getString("in_reply_to_status_id_str");
             id = tweet.getLong("id");
+            if(tweet.getJSONObject("entities") != null && tweet.getJSONObject("entities").getJSONArray("media") != null && tweet.getJSONObject("entities").getJSONArray("media").get(0) != null) {
+                media = new Media(tweet.getJSONObject("entities").getJSONArray("media").getJSONObject(0)); // Because consistency
+                String oriText = text;
+                StringBuilder sb = new StringBuilder();
+                for(int i = 0; i < oriText.length(); i++) {
+                    if(i < media.getIndices()[0] || i > media.getIndices()[1]) sb.append(oriText.charAt(i));
+                }
+                text = sb.toString();
+            }
         } catch (JSONException e) {
             Log.e(TAG, "Tweet: ", e);
         }
+    }
+
+    public Media getMedia() {
+        return media;
     }
 
     public Tweet() {}

@@ -6,4 +6,7 @@
     <string name="action_home">Home</string>
     <string name="title_activity_new_tweet">Status update</string>
     <string name="action_my_profile">My profile</string>
+    <string name="settingMeteredOverrideTitle">Metered connection override</string>
+    <string name="settingMeteredOverrideText">Makes sure that less data is used when downloading stuff. Might also speed up connectivity-dependant actions.</string>
+    <string name="settings_activity">Settings</string>
 </resources>

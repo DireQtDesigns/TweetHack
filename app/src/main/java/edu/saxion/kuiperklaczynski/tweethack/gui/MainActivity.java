@@ -380,6 +380,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
 
+            case R.id.action_settings:
+                Intent authIntent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(authIntent);
+                break;
+
             case R.id.action_logout:
                 tweetsList.clear();
                 prefs.edit().remove("access_token").apply();

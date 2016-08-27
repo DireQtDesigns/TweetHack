@@ -11,7 +11,7 @@
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
         android:title="Search"
-        app:showAsAction="never"/>
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_profile"
@@ -23,6 +23,11 @@
         android:id="@+id/action_authtest"
         android:icon="@drawable/ic_search"
         android:title="Test auth"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:title="Settings"
         app:showAsAction="never"/>
 
     <item

@@ -42,8 +42,14 @@
         <activity
             android:name=".gui.NewTweetActivity"
             android:label="@string/title_activity_new_tweet"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".gui.MainActivity"/>
+            android:parentActivityName=".gui.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".gui.SettingsActivity"
+            android:label="@string/settings_activity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

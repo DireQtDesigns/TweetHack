@@ -3,6 +3,7 @@
     package="edu.saxion.kuiperklaczynski.tweethack">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -34,9 +35,6 @@
             android:label="@string/title_activity_tweet_detail"
             android:parentActivityName=".gui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="edu.saxion.kuiperklaczynski.tweethack.gui.MainActivity" />
         </activity>
         <activity android:name=".gui.AuthActivity" />
         <activity

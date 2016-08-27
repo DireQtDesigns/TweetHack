@@ -3,6 +3,8 @@ package edu.saxion.kuiperklaczynski.tweethack.gui;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String bearerToken;
     private int previousLastItemShown;
+    private int position;
+    private TweetListAdapter tweetListAdapter;
 
     public void addBearerToken(String s) {
         if (bearerToken == null) {
@@ -109,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         instance = this;
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -163,7 +166,19 @@ public class MainActivity extends AppCompatActivity {
 
         setListView();
 
-        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+        listView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                position = listView.getFirstVisiblePosition();
+                Log.d(TAG, "onScrollChange: Scrolling, position: "+position);
+                if(listView.getFirstVisiblePosition() + (listView.getLastVisiblePosition() - listView.getFirstVisiblePosition()) >= listView.getAdapter().getCount() - 5 && listView.getAdapter().getCount() != 0){
+                    onScrollDown();
+
+                }
+            }
+        }); //API 23 (Actually works)
+        /*listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
 
@@ -181,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
                     onScrollDown();
                 }
             }
-        });
+        });*/ //API 19
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary));
@@ -247,27 +262,29 @@ public class MainActivity extends AppCompatActivity {
      * called when the user scrolls down far enough to load new tweets
      */
     private void onScrollDown() {
-        Toast.makeText(this, "getting more tweets for you, hang on..", Toast.LENGTH_SHORT).show();
+        if(canRefresh()) {
+            Toast.makeText(this, "getting more tweets for you, hang on..", Toast.LENGTH_SHORT).show();
 
-        Log.d(TAG, "onScroll: scrolling down in " + type);
+            Log.d(TAG, "onScroll: scrolling down in " + type);
 
-        switch (type) {
-            case SEARCH:
-                if (!flag_loading) {
-                    flag_loading = true;
-                    long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
-                    searchTask(null, "&max_id=" + nextid);
-                }
-                break;
+            switch (type) {
+                case SEARCH:
+                    if (!flag_loading) {
+                        flag_loading = true;
+                        long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
+                        searchTask(null, "&max_id=" + nextid);
+                    }
+                    break;
 
-            case HOME:
-                if (flag_loading == false) {
-                    flag_loading = true;
-                    long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
-                    timeLineTask(null, "?max_id=" + nextid);
-                }
-                break;
+                case HOME:
+                    if (flag_loading == false) {
+                        flag_loading = true;
+                        long nextid = tweetsList.get(tweetsList.size() - 1).getId() - 1;
+                        timeLineTask(null, "?max_id=" + nextid);
+                    }
+                    break;
             }
+        }
     }
 
     /**
@@ -275,12 +292,19 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     protected void onResume() {
+        Log.d(TAG, "onResume: Calling onresume");
         SharedPreferences prefs = getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", MODE_PRIVATE);
         if (prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
             Log.d(TAG, "onCreate: User already authenticated, no need to ask for re-authorisation");
         } else {
             Intent intent = new Intent(this, AuthActivity.class);
             startActivity(intent);
+        }
+
+        listView = (ListView) findViewById(R.id.tweetsListView);
+        if(listView.getAdapter().getCount() > 8) { //Roughly 8 visible
+            listView.smoothScrollToPosition(position);
+            Log.d(TAG, "onResume: Resuming listview position: "+position);
         }
         super.onResume();
     }
@@ -390,7 +414,7 @@ public class MainActivity extends AppCompatActivity {
                 prefs.edit().remove("access_token").apply();
                 prefs.edit().remove("access_token_secret").apply();
                 if (prefs.getAll().containsKey("access_token") && prefs.getAll().containsKey("access_token_secret")) {
-                    Log.d(TAG, "onCreate: User already authenticated, no need to ask for re-authorisation");
+                    Log.d(TAG, "onOptions: User already authenticated, no need to ask for re-authorisation");
                 } else {
                     Intent reAuthIntent = new Intent(this, AuthActivity.class);
                     startActivity(reAuthIntent);
@@ -414,7 +438,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void updateView(ArrayList<Tweet> list) {
         tweetsList = list;
-
+        Log.d(TAG, "updateView: calling <<--");
         setListView();
     }
 
@@ -502,12 +526,22 @@ public class MainActivity extends AppCompatActivity {
      * @param maxID
      */
     private void searchTask(String sinceID, String maxID) {
+        final SharedPreferences prefs = this.getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", this.MODE_PRIVATE);
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = connMgr.getActiveNetworkInfo();
         if (sinceID == null) {
             sinceID = "";
         }
 
         if (maxID == null) {
             maxID = "";
+        }
+        if(prefs.getBoolean("meteredOverride", true) == true || netInfo.getType() == ConnectivityManager.TYPE_MOBILE) {            //if ain't sure, let's not blast the network with 100+ tweets
+            sinceID = "?count=20";
+            Log.e(TAG, "timeLineTask: Metered! Asking for just 20");
+        } else {
+            sinceID = "?count=150";
+            Log.e(TAG, "timeLineTask: Not metered, asking for 150");
         }
 
         new SearchTask().execute(new String[]{accessToken, accessTokenSecret, bearerToken, seachField, sinceID + maxID});
@@ -519,12 +553,22 @@ public class MainActivity extends AppCompatActivity {
      * @param maxID
      */
     private void timeLineTask(String sinceID, String maxID) {
+        final SharedPreferences prefs = this.getSharedPreferences("edu.saxion.kuiperklaczynski.tweethack", this.MODE_PRIVATE);
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = connMgr.getActiveNetworkInfo();
         if (sinceID == null) {
             sinceID = "";
         }
 
         if (maxID == null) {
             maxID = "";
+        }
+        if(prefs.getBoolean("meteredOverride", true) == true || netInfo.getType() == ConnectivityManager.TYPE_MOBILE) {            //if ain't sure, let's not blast the network with 100+ tweets
+            sinceID = "?count=20";
+            Log.e(TAG, "timeLineTask: Metered! Asking for just 20");
+        } else {
+            sinceID = "?count=150";
+            Log.e(TAG, "timeLineTask: Not metered, asking for 150");
         }
 
         new TimeLineTask().execute(new String[]{accessToken, accessTokenSecret, sinceID + maxID});
@@ -548,7 +592,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //makes you come back to your original location when loading new tweets
-        listView.smoothScrollToPosition(viewPosition);
+        //listView.smoothScrollToPosition(viewPosition);
 
         ((TweetListAdapter) listView.getAdapter()).notifyDataSetChanged();
 
@@ -558,8 +602,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setListView() {
-        TweetListAdapter tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, tweetsList);
+        if(tweetListAdapter == null) tweetListAdapter = new TweetListAdapter(this, R.layout.tweet_list_item, tweetsList);
         listView = (ListView) findViewById(R.id.tweetsListView);
-        listView.setAdapter(tweetListAdapter);
+        if(listView.getAdapter() == null) listView.setAdapter(tweetListAdapter);
+        Log.d(TAG, "setListView: calling <<--");
+        listView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                position = listView.getFirstVisiblePosition();
+                Log.d(TAG, "onScrollChange: Scrolling, position: "+position);
+            }
+        });
     }
 }

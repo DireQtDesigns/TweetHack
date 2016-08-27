@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -12,6 +13,7 @@ import android.text.Html;
 import android.text.InputFilter;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -137,7 +139,7 @@ public class TweetDetailActivity extends AppCompatActivity {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent profileIntent = new Intent(MainActivity.getInstance(),UserActivity.class);
+                Intent profileIntent = new Intent(TweetDetailActivity.this,UserActivity.class);
                 profileIntent.putExtra("TweetID", detailTweet.getUser().getId());
                 startActivity(profileIntent);
             }
@@ -278,5 +280,16 @@ public class TweetDetailActivity extends AppCompatActivity {
         String accessTokenSecretStr = prefs.getString("access_token_secret", "");
         OAuth1AccessToken accessToken = new OAuth1AccessToken(accessTokenStr, accessTokenSecretStr);
         return accessToken;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

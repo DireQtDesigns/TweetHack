@@ -20,7 +20,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_margin="15dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/tweet_frame_background"
@@ -100,8 +99,16 @@
             <com.ortiz.touch.TouchImageView
                 android:id="@+id/tweetDetailTweetImage"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="250dp"
                 android:src="@drawable/dinosaur"
+                android:layout_margin="3dp"
+                android:visibility="gone"
+                android:layout_marginTop="5dp" />
+
+            <WebView
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:id="@+id/tweetDetailWebView"
                 android:layout_margin="3dp"
                 android:visibility="gone" />
 
@@ -140,16 +147,23 @@
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp">
 
+                <!--Cheeky fix, this 'fake' element takes the initial focus before the edittext can-->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@android:color/transparent"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true">
+                </LinearLayout>
+
                 <EditText
                     android:id="@+id/tweetDetailReplyField"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:allowUndo="false"
                     android:alpha="0.8"
                     android:background="@drawable/reply_frame_background"
-                    android:inputType="textNoSuggestions"
                     android:paddingBottom="5dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"

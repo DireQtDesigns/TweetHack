@@ -8,12 +8,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.Html;
 import android.text.InputFilter;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -49,11 +51,12 @@ public class TweetDetailActivity extends AppCompatActivity {
     public static ArrayList<Tweet> tweetsList = new ArrayList<>(), repliesTo = new ArrayList<>();
     public static Map<Long, Tweet> tweetsMap = new HashMap<>(); //id_str is key
     private static final String TAG = "TweetHax_TweetDetail"; //Log Tag
-    private String fullName, username, avatarURL, body, timeAgo, id_str, media_url;
+    private String fullName, username, avatarURL, body, timeAgo, id_str, media_url, url, expanded_url;
     private int[] mediaIndices;
     private long id;
     TweetListAdapter tweetListAdapter;
     public Tweet detailTweet;
+    private boolean hasGif = false;
 
 
     /**
@@ -85,6 +88,20 @@ public class TweetDetailActivity extends AppCompatActivity {
             if(detailTweet.getMedia() != null) {
                 media_url = detailTweet.getMedia().getMedia_URL();
                 mediaIndices = detailTweet.getMedia().getIndices();
+            }
+            if(detailTweet.getMedia() != null) {
+                if(detailTweet.getMedia().getURL() != null) {
+                    url = detailTweet.getMedia().getURL();
+                }
+                if(detailTweet.getMedia().getExpandedURL() != null) {
+                    expanded_url = detailTweet.getMedia().getExpandedURL();
+                }
+            }
+            if(expanded_url != null && !expanded_url.equals("") && url != null && !url.equals("")) {
+                body.replace(url, "");
+            }
+            if(detailTweet.hasGif()) {
+                hasGif = true;
             }
         }
 
@@ -132,7 +149,11 @@ public class TweetDetailActivity extends AppCompatActivity {
 
         nameView.setText(fullName);
         usernameView.setText("@" + username);
-        bodyView.setText(body);
+
+        if(hasGif) {
+            bodyView.setText(Html.fromHtml(body + "<font color=red> (NO GIF SUPPORT)"));
+        } else bodyView.setText(body);
+
         timeAgoView.setText(timeAgo);
         replyField.setText("@" + username + " ");
 
@@ -202,7 +223,17 @@ public class TweetDetailActivity extends AppCompatActivity {
                     return false;
                 }
             });
-        }
+        }/**
+        WebView wv = (WebView) findViewById(R.id.tweetDetailWebView);
+        if(expanded_url != null && !expanded_url.equals("") && url != null && !url.equals("") && (media_url == null || media_url.equals(""))) {
+            wv.loadUrl(expanded_url);
+            wv.setVisibility(View.VISIBLE);
+        } else if(url != null && !url.equals("")) {
+            wv.loadUrl(url);
+            wv.setVisibility(View.VISIBLE);
+        } else {
+            wv.setVisibility(View.GONE);
+        }**/ //Does random unexplainable crap.
     }
 
     /**

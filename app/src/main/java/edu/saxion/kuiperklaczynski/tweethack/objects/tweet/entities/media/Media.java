@@ -46,13 +46,26 @@ public class Media {
 
     public Media(JSONObject mediaObject) {
         try {
-            indices = new int[2];
-            indices[0] = mediaObject.getJSONArray("indices").getInt(0);
-            indices[1] = mediaObject.getJSONArray("indices").getInt(1);
-            media_URL = mediaObject.getString("media_url");
+            if(!mediaObject.getString("media_url").equals("") && mediaObject.has("media_url")) {
+                indices = new int[2];
+                indices[0] = mediaObject.getJSONArray("indices").getInt(0);
+                indices[1] = mediaObject.getJSONArray("indices").getInt(1);
+                media_URL = mediaObject.getString("media_url");
+            }
+            String expanded = mediaObject.getString("expanded_url");
+            if(!expanded.equals("")) expanded_URL = expanded;
+            URL = mediaObject.getString("url");
         } catch (JSONException e) {
             Log.e(TAG, "Media: ", e);
         }
+    }
+
+    public String getURL() {
+        return URL;
+    }
+
+    public String getExpandedURL() {
+        return expanded_URL;
     }
 
     public String getMedia_URL() {
@@ -65,5 +78,17 @@ public class Media {
 
     public int[] getIndices() {
         return indices;
+    }
+
+    public void loadUrls(JSONObject entities) throws JSONException {
+        Log.d(TAG, "loadUrls: Loading urls");
+        if(entities.has("urls")) {
+            if(entities.getJSONArray("urls").length() > 0) {
+                Log.d(TAG, "loadUrls: Has url");
+                JSONObject url = entities.getJSONArray("urls").getJSONObject(0);
+                if(url.getString("expanded_url") != null && !url.getString("expanded_url").equals("")) expanded_URL = url.getString("expanded_url");
+                if(url.getString("url") != null && !url.getString("url").equals("")) URL = url.getString("url");
+            }
+        }
     }
 }

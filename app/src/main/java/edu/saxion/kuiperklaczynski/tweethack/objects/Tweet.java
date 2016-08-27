@@ -22,6 +22,7 @@ import edu.saxion.kuiperklaczynski.tweethack.objects.tweet.entities.media.Media;
  */
 public class Tweet implements Serializable {
     private final String TAG = "Tweet";
+    private boolean hasGif = false;
 
     private String createdAt;
     private long id;
@@ -67,14 +68,22 @@ public class Tweet implements Serializable {
             created_at = tweet.getString("created_at");
             in_reply_to_status_id_str = tweet.getString("in_reply_to_status_id_str");
             id = tweet.getLong("id");
-            if(tweet.getJSONObject("entities") != null && tweet.getJSONObject("entities").getJSONArray("media") != null && tweet.getJSONObject("entities").getJSONArray("media").get(0) != null) {
+            if(tweet.getJSONObject("entities") != null && tweet.getJSONObject("entities").has("media") && tweet.getJSONObject("entities").getJSONArray("media") != null && tweet.getJSONObject("entities").getJSONArray("media").get(0) != null) {
                 media = new Media(tweet.getJSONObject("entities").getJSONArray("media").getJSONObject(0)); // Because consistency
+                media.loadUrls(tweet.getJSONObject("entities"));
+
                 String oriText = text;
-                StringBuilder sb = new StringBuilder();
-                for(int i = 0; i < oriText.length(); i++) {
-                    if(i < media.getIndices()[0] || i > media.getIndices()[1]) sb.append(oriText.charAt(i));
+                if(getMedia().getMedia_URL().endsWith("gif") || getMedia().getMedia_URL().contains("tweet_video_thumb")) {
+                    hasGif = true;
+                } else {
+                    Log.e(TAG, "Tweet: media url: "+ getMedia().getMedia_URL());
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < oriText.length(); i++) {
+                        if (i < media.getIndices()[0] || i > media.getIndices()[1])
+                            sb.append(oriText.charAt(i));
+                    }
+                    text = sb.toString();
                 }
-                text = sb.toString();
             }
         } catch (JSONException e) {
             Log.e(TAG, "Tweet: ", e);
@@ -325,5 +334,9 @@ public class Tweet implements Serializable {
 
     public void setWithheld_scope(String withheld_scope) {
         this.withheld_scope = withheld_scope;
+    }
+
+    public boolean hasGif() {
+        return hasGif;
     }
 }

@@ -56,6 +56,7 @@ public class TimeLineTask extends ErrorTask<String, Void, ArrayList<Tweet>> {
 
         if (response.getCode() != 200) {
             Log.d(TAG, "doInBackground: response was " + response.getCode());
+            Log.d(TAG, "doInBackground: "+response.toString());
             return failureHelper(response.getCode());
         }
 

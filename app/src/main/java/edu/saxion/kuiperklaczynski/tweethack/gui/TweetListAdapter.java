@@ -59,7 +59,12 @@ public class TweetListAdapter extends ArrayAdapter<Tweet> {
         if(convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.tweet_list_item, parent, false);
         }
-        final Tweet tweet = tweets.get(position);
+        final Tweet tweet;
+        if(tweets.size() > 0 && tweets.get(position) != null) {
+            tweet = tweets.get(position);
+        } else {
+            tweet = null;
+        }
 
         TextView nameView = (TextView) convertView.findViewById(R.id.nameView);
         TextView timeView = (TextView) convertView.findViewById(R.id.timeView);
@@ -67,31 +72,34 @@ public class TweetListAdapter extends ArrayAdapter<Tweet> {
         ImageView avatarView = (ImageView) convertView.findViewById(R.id.avatarView);
 
         //Setting values
-        nameView.setText(tweet.getUser().getName());
-        if (tweet.getCreated_at() == null) {
-            Log.d(TAG, "getView: getCreated_at() is null");
-        } else {
-            timeView.setText(StringDateConverter.agoString(System.currentTimeMillis(), StringDateConverter.dateFromJSONString(tweet.getCreated_at())));
-        }
-        bodyView.setText(tweet.getText());
-        if(tweet.getMedia() != null) {
-            convertView.setBackgroundColor(convertView.getResources().getColor(R.color.colorAccent3));
-        } else {
-            convertView.setBackgroundColor(Color.WHITE);
-        }
-
-        //Image fetching from URL
-        String imgURL = tweet.getUser().getProfile_image_url();
-        new DownloadImageTask(avatarView).execute(imgURL);
-
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.getInstance(), TweetDetailActivity.class);
-                intent.putExtra("TweetID", tweets.get(position).getId());
-                MainActivity.getInstance().startActivity(intent);
+        if(tweet != null) {
+            nameView.setText(tweet.getUser().getName());
+            if (tweet.getCreated_at() == null) {
+                Log.d(TAG, "getView: getCreated_at() is null");
+            } else {
+                timeView.setText(StringDateConverter.agoString(System.currentTimeMillis(), StringDateConverter.dateFromJSONString(tweet.getCreated_at())));
             }
-        });
+            bodyView.setText(tweet.getText());
+            if (tweet.getMedia() != null) {
+                convertView.setBackgroundColor(convertView.getResources().getColor(R.color.colorAccent3));
+            } else {
+                convertView.setBackgroundColor(Color.WHITE);
+            }
+
+
+            //Image fetching from URL
+            String imgURL = tweet.getUser().getProfile_image_url();
+            new DownloadImageTask(avatarView).execute(imgURL);
+
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.getInstance(), TweetDetailActivity.class);
+                    intent.putExtra("TweetID", tweets.get(position).getId());
+                    MainActivity.getInstance().startActivity(intent);
+                }
+            });
+        }
 
         return convertView;
     }
